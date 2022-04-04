@@ -5,20 +5,27 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";//For time calculations
 import "@openzeppelin/contracts/access/Ownable.sol";//Garantee only the DS creator can change its parameters
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buying problems
 
-    contract DataSet is Ownable, ReentrancyGuard{
-        //User Variables
+contract DataSet is Ownable, ReentrancyGuard{
+
+    //
+    //USER VARIABLES
+    //
         struct Subscriber {
-            uint256 price_paid;
-            uint256 sub_time;
-            bool subbed;
+            uint256 price_paid;//how much did this sub pay?
+            uint256 sub_time;//for how long is this sub subbed?
+            bool subbed;//for an easy way to check if an address is subbed 
         }
 
+        //array of subscribers
         Subscriber[] public subscriber;
+        //mapping of a subs address to his info
         mapping(address => Subscriber) public addressToSub;
 
-        //Data set Variables
+    //
+    //DATASET VARIABLES
+    //
         string DSname;
-        string URL;
+        string private URL;
         string category;
         string shortDesc;
         uint256[] public subscriptionTimes;
@@ -26,17 +33,20 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buy
         uint256 DSrating;
         uint256 creationTime;
         uint256 lastUpdated;
-        uint256 uploadFrequency;
-        address ownerAddress;
+        uint256 updateFrequency;
+        address creatorAddress;
 
-        //Setting initial variables
+    //
+    //SETTING INITIAL VARIABLES
+    //
         constructor(
             string memory _DSname,
             string memory _URL,
             string memory _category,
             string memory _shortDesc,
+            string memory _creatorAddress,
             uint256 _DSprice,
-            uint256 _uploadFrequency
+            uint256 _updateFrequency
         ) {
             DSname = _DSname;
             URL = _URL;
@@ -46,16 +56,21 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buy
             DSrating = 0;
             creationTime = block.timestamp;
             lastUpdated = block.timestamp;
-            uploadFrequency = _uploadFrequency;
+            updateFrequency = _updateFrequency;
+            creatorAddress = _creatorAddress;
         }
 
-        //Modifiers
-        modifier onlySubs(){
-            require(addressToSub[msg.value].subbed == true);
+    //
+    //MODIFIERS
+    //
+        modifier onlySubs(){ //give special permission to only those that are subbed
+            require(addressToSub[msg.sender].subbed == true);
             _;
         }
 
-    //Creator functions
+    //
+    //CREATOR FUNCTIONS
+    //
         function updateURL(string memory _URL) public onlyOwner {
             URL = _URL;
         }
@@ -78,12 +93,17 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buy
 
         function deleteDS() public onlyOwner {
             //to do
+            //it should also activate if the staked DHN goes to zero, which means the creator has not updated
+            //in a long time
         }
 
-    //Subscriber function
-        function subscribeToDS(uint _subPeriod) public payable {
-            //require that pays the correct price for the subscription
+    //
+    //SUBSCRIBER FUNCTIONS
+    //
+        function subscribeToDS(uint _subPeriod) public payable nonReentrant{
+            //require that he pays the correct price for the subscription
             //require he is not subscribed already
+            require(addressToSub[msg.sender].subbed != true);
             subscriber.push(msg.sender);
             addressToSub[msg.sender] = Subscriber(msg.value, _subPeriod, true);
         }
@@ -92,6 +112,10 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buy
             return URL;
         }
 
+
+    //
+    //LOGISTIC FUNCTIONS
+    //
         function checkUpdateSchedule() public {
             //to do
         }
