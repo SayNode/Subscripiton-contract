@@ -13,6 +13,7 @@ contract DataSet is Ownable, ReentrancyGuard{
         struct Subscriber {
             uint256 price_paid;//how much did this sub pay?
             uint256 sub_time;//for how long is this sub subbed?
+            uint256 sub_init_time;//when did he sub?
             bool subbed;//for an easy way to check if an address is subbed 
         }
 
@@ -54,8 +55,8 @@ contract DataSet is Ownable, ReentrancyGuard{
             shortDesc = _shortDesc;
             DSprice = _DSprice;
             DSrating = 0;
-            creationTime = block.timestamp;
-            lastUpdated = block.timestamp;
+            creationTime = now;
+            lastUpdated = now;
             updateFrequency = _updateFrequency;
             creatorAddress = _creatorAddress;
         }
@@ -105,7 +106,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             //require he is not subscribed already
             require(addressToSub[msg.sender].subbed != true);
             subscriber.push(msg.sender);
-            addressToSub[msg.sender] = Subscriber(msg.value, _subPeriod, true);
+            addressToSub[msg.sender] = Subscriber(msg.value, _subPeriod, now, true);
         }
 
         function requestURL() public view onlySubs returns(string memory) {
@@ -118,10 +119,13 @@ contract DataSet is Ownable, ReentrancyGuard{
     //
         function checkUpdateSchedule() public {
             //to do
+            //if lastUpdated+updateTime>updateSchedule the creator should lose some staked DHN coins
         }
 
         function checkIfStillSubbed() public {
             //to do
+            //possibly a modifier or just a simple require() inside the requestURL() func
+            //sees if the user is still subed (aka now - sub_init_time< sub_time)
         }
     }
 }

@@ -34,6 +34,7 @@ contract DataSetFactory is DataSet {
             uint256 _updateFrequency //Dataset update frequency
         ) public nonReentrant
     {
+            //MUST REQUIRE THE CREATOR TO DEPOSIT/STAKE SOME DHN TOKENS IN THIS CONTRACT
             //Creates a new SC dor the new DataSet
             DataSet dataset = new DataSet(_DSname, _URL, _category, _shortDesc, msg.sender, _DSprice, _updateFrequency);
             //Maps the new DS name to its contract address
