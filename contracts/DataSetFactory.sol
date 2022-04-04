@@ -11,6 +11,12 @@ contract DataSetFactory is DataSet {
 
     //Creator arrays
     address[] public creators;
+    /*struct Creator{
+        bool creatorExists;
+        DataSet[] SCaddress;
+    }
+    mapping(address => Creator) public addressToCreator;
+    */
     mapping(address => bool) public creatorExists;
 
     //Creator address to the array of his created DS smart contract addresses
