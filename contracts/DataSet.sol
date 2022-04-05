@@ -90,11 +90,11 @@ contract DataSet is Ownable, ReentrancyGuard{
         }
 
         function changeSubscriptionPeriods(uint[] memory _subTimes) public onlyOwner {
-            //to do
+            //TO DO
         }
 
         function deleteDS() public onlyOwner {
-            //to do
+            //TO DO
             //it should also activate if the staked DHN goes to zero, which means the creator has not updated
             //in a long time
         }
@@ -104,6 +104,7 @@ contract DataSet is Ownable, ReentrancyGuard{
     //
         function subscribeToDS(uint _subPeriod) public payable nonReentrant{
             //require that he pays the correct price for the subscription
+                //TO DO
 
             //require he is not subscribed already
             require(addressToSub[msg.sender].subbed != true);
@@ -123,9 +124,9 @@ contract DataSet is Ownable, ReentrancyGuard{
         }
 
         function requestURL() public onlySubs returns(string memory) {
-            //ff the sub time hasn't expired yet
+            //if the sub time hasn't expired yet
             if(checkIfStillSubbed()){
-                return URL;
+                return URL;//return the url link
             }
             //else 
             //this subscriber is no longer subscribed (but we keep his info in order to facilitate a possible re-sub)
@@ -147,10 +148,11 @@ contract DataSet is Ownable, ReentrancyGuard{
         }
 
         function checkIfStillSubbed() public view returns(bool){//is the user still in its sub period?
-            //sees if the user is still subed (aka now - sub_init_time< sub_time)
+            //sees if the user is still subed:
+            //if now -  the initial sub time < the subscription time
             if((block.timestamp - addressToSub[msg.sender].sub_init_time)< addressToSub[msg.sender].sub_time){
                 return true;
-            }
+            }//else
             return false;
             
         }
