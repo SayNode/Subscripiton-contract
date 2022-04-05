@@ -70,10 +70,9 @@ contract DataSet is Ownable, ReentrancyGuard{
         }
 
         modifier checkIfStillSubbed(){//
-            //to do
-            //possibly a modifier or just a simple require() inside the requestURL() func
             //sees if the user is still subed (aka now - sub_init_time< sub_time)
-            require((block.timestamp - addressToSub[msg.sender].sub_init_time)< addressToSub[msg.sender].sub_time, "You are not subscribed/Your subcription has ended.");
+            require((block.timestamp - addressToSub[msg.sender].sub_init_time)< addressToSub[msg.sender].sub_time, 
+                                                                "You are not subscribed/Your subcription has ended.");
             _;
         }
 
@@ -128,6 +127,9 @@ contract DataSet is Ownable, ReentrancyGuard{
         function checkUpdateSchedule() public {
             //to do
             //if lastUpdated+updateTime>updateSchedule the creator should lose some staked DHN coins
+            if(lastUpdated+block.timestamp>lastUpdated+updateFrequency){
+                //do something
+            }
         }
     
 }
