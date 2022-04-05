@@ -17,8 +17,8 @@ contract DataSet is Ownable, ReentrancyGuard{
             bool subbed;//for an easy way to check if an address is subbed 
         }
 
-        //array of subscribers
-        Subscriber[] public subscriber;
+        //array of subscribers addresses
+        address[] public subscribers;
         //mapping of a subs address to his info
         mapping(address => Subscriber) public addressToSub;
 
@@ -45,7 +45,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             string memory _URL,
             string memory _category,
             string memory _shortDesc,
-            string memory _creatorAddress,
+            address _creatorAddress,
             uint256 _DSprice,
             uint256 _updateFrequency
         ) {
@@ -55,8 +55,8 @@ contract DataSet is Ownable, ReentrancyGuard{
             shortDesc = _shortDesc;
             DSprice = _DSprice;
             DSrating = 0;
-            creationTime = now;
-            lastUpdated = now;
+            creationTime = block.timestamp;
+            lastUpdated = block.timestamp;
             updateFrequency = _updateFrequency;
             creatorAddress = _creatorAddress;
         }
@@ -66,6 +66,14 @@ contract DataSet is Ownable, ReentrancyGuard{
     //
         modifier onlySubs(){ //give special permission to only those that are subbed
             require(addressToSub[msg.sender].subbed == true);
+            _;
+        }
+
+        modifier checkIfStillSubbed(){//
+            //to do
+            //possibly a modifier or just a simple require() inside the requestURL() func
+            //sees if the user is still subed (aka now - sub_init_time< sub_time)
+            require((block.timestamp - addressToSub[msg.sender].sub_init_time)< addressToSub[msg.sender].sub_time, "You are not subscribed/Your subcription has ended.");
             _;
         }
 
@@ -88,7 +96,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             shortDesc = _shortDesc;
         }
 
-        function changeSubscriptionPeriods(uint[] _subTimes) public onlyOwner {
+        function changeSubscriptionPeriods(uint[] memory _subTimes) public onlyOwner {
             //to do
         }
 
@@ -105,11 +113,11 @@ contract DataSet is Ownable, ReentrancyGuard{
             //require that he pays the correct price for the subscription
             //require he is not subscribed already
             require(addressToSub[msg.sender].subbed != true);
-            subscriber.push(msg.sender);
-            addressToSub[msg.sender] = Subscriber(msg.value, _subPeriod, now, true);
+            subscribers.push(payable(msg.sender));
+            addressToSub[msg.sender] = Subscriber(msg.value, _subPeriod, block.timestamp, true);
         }
 
-        function requestURL() public view onlySubs returns(string memory) {
+        function requestURL() public view onlySubs checkIfStillSubbed returns(string memory) {
             return URL;
         }
 
@@ -121,11 +129,5 @@ contract DataSet is Ownable, ReentrancyGuard{
             //to do
             //if lastUpdated+updateTime>updateSchedule the creator should lose some staked DHN coins
         }
-
-        function checkIfStillSubbed() public {
-            //to do
-            //possibly a modifier or just a simple require() inside the requestURL() func
-            //sees if the user is still subed (aka now - sub_init_time< sub_time)
-        }
-    }
+    
 }
