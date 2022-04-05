@@ -35,6 +35,7 @@ contract DataSet is Ownable, ReentrancyGuard{
         uint256 creationTime;//Data set time of creation
         uint256 lastUpdated;//Keeps track of the time the DS was last updated
         uint256 updateFrequency;//How often if the DS updated?
+        uint256 subCount = 0;//See how many people have subscribed to this DS since it was created;
         address creatorAddress;//Address of the creator
 
     //
@@ -66,13 +67,6 @@ contract DataSet is Ownable, ReentrancyGuard{
     //
         modifier onlySubs(){ //give special permission to only those that are subbed
             require(addressToSub[msg.sender].subbed == true);
-            _;
-        }
-
-        modifier checkIfStillSubbed(){//
-            //sees if the user is still subed (aka now - sub_init_time< sub_time)
-            require((block.timestamp - addressToSub[msg.sender].sub_init_time)< addressToSub[msg.sender].sub_time, 
-                                                                "You are not subscribed/Your subcription has ended.");
             _;
         }
 
@@ -110,14 +104,32 @@ contract DataSet is Ownable, ReentrancyGuard{
     //
         function subscribeToDS(uint _subPeriod) public payable nonReentrant{
             //require that he pays the correct price for the subscription
+
             //require he is not subscribed already
             require(addressToSub[msg.sender].subbed != true);
-            subscribers.push(payable(msg.sender));
-            addressToSub[msg.sender] = Subscriber(msg.value, _subPeriod, block.timestamp, true);
+
+            //if the user already has info in this DS
+            if(addressToSub[msg.sender].price_paid!=0){
+                addressToSub[msg.sender].subbed=true;
+                addressToSub[msg.sender].sub_init_time=block.timestamp;
+                addressToSub[msg.sender].sub_time=_subPeriod;
+            }else{//else
+                subscribers.push(payable(msg.sender));
+                addressToSub[msg.sender] = Subscriber(msg.value, _subPeriod, block.timestamp, true);
+                subCount++;
+            }
+            
         }
 
-        function requestURL() public view onlySubs checkIfStillSubbed returns(string memory) {
-            return URL;
+        function requestURL() public onlySubs returns(string memory) {
+            //ff the sub time hasn't expired yet
+            if(checkIfStillSubbed()){
+                return URL;
+            }
+            //else 
+            //this subscriber is no longer subscribed (but we keep his info in order to facilitate a possible re-sub)
+            addressToSub[msg.sender].subbed=false;
+            return "You are no longer subscribed to this data set";
         }
 
 
@@ -131,6 +143,23 @@ contract DataSet is Ownable, ReentrancyGuard{
             if(lastUpdated+block.timestamp>lastUpdated+updateFrequency){
                 //do something
             }
+        }
+
+        function checkIfStillSubbed() public view returns(bool){//is the user still in its sub period?
+            //sees if the user is still subed (aka now - sub_init_time< sub_time)
+            if((block.timestamp - addressToSub[msg.sender].sub_init_time)< addressToSub[msg.sender].sub_time){
+                return true;
+            }
+            return false;
+            
+        }
+
+        function numberOfCurrentlySubbed() public view returns(uint){//how many people are currently subbed?
+            uint count = 0;
+            for(uint i = 0; i<subscribers.length; i++){
+                if(addressToSub[subscribers[i]].subbed == true)count++;
+            }
+            return count;
         }
     
 }
