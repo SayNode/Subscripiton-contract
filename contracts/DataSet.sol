@@ -23,19 +23,19 @@ contract DataSet is Ownable, ReentrancyGuard{
         mapping(address => Subscriber) public addressToSub;
 
     //
-    //DATASET VARIABLES
+    //DATASET VARIABLES - THESE COME FROM THE FRONT-END/CLIENT INTERACTION
     //
-        string DSname;
-        string private URL;
-        string category;
-        string shortDesc;
-        uint256[] public subscriptionTimes;
-        uint256 DSprice;
-        uint256 DSrating;
-        uint256 creationTime;
-        uint256 lastUpdated;
-        uint256 updateFrequency;
-        address creatorAddress;
+        string DSname;//Data set name
+        string private URL;//IPFS URL
+        string category;//Data set category
+        string shortDesc;//Data set description
+        uint256[] public subscriptionTimes;//Possible sub periods from which the sub can choose
+        uint256 DSprice;//Data set price
+        uint256 DSrating;//Data set rating
+        uint256 creationTime;//Data set time of creation
+        uint256 lastUpdated;//Keeps track of the time the DS was last updated
+        uint256 updateFrequency;//How often if the DS updated?
+        address creatorAddress;//Address of the creator
 
     //
     //SETTING INITIAL VARIABLES
@@ -126,7 +126,8 @@ contract DataSet is Ownable, ReentrancyGuard{
     //
         function checkUpdateSchedule() public {
             //to do
-            //if lastUpdated+updateTime>updateSchedule the creator should lose some staked DHN coins
+            //if lastUpdated+block.timestamp>lastUpdated+updateFrequency the creator should lose some staked DHN coins
+            //we will need to add the buffer later
             if(lastUpdated+block.timestamp>lastUpdated+updateFrequency){
                 //do something
             }
