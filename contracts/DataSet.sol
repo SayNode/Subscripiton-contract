@@ -109,16 +109,17 @@ contract DataSet is Ownable, ReentrancyGuard{
             require(addressToSub[msg.sender].subbed != true);
 
             //if the user already has info in this DS
-            if(addressToSub[msg.sender].price_paid!=0){
-                addressToSub[msg.sender].subbed=true;
-                addressToSub[msg.sender].sub_init_time=block.timestamp;
-                addressToSub[msg.sender].sub_time=_subPeriod;
+            if(addressToSub[msg.sender].sub_init_time!=0){
+                addressToSub[msg.sender].subbed=true;//declare that he is subbed again
+                addressToSub[msg.sender].sub_init_time=block.timestamp;//update the time he subbed
+                addressToSub[msg.sender].sub_time=_subPeriod;//update his subbed time
             }else{//else
-                subscribers.push(payable(msg.sender));
-                addressToSub[msg.sender] = Subscriber(msg.value, _subPeriod, block.timestamp, true);
-                subCount++;
+                subscribers.push(payable(msg.sender));//add new sub address to the record
+                addressToSub[msg.sender] = Subscriber(msg.value, _subPeriod, block.timestamp, true);//create the new sub info
+                                                                                                    //and map it to his address
+                subCount++;//increment all time sub count
             }
-            
+
         }
 
         function requestURL() public onlySubs returns(string memory) {
