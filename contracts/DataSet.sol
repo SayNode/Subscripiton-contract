@@ -103,11 +103,10 @@ contract DataSet is Ownable, ReentrancyGuard{
     //SUBSCRIBER FUNCTIONS
     //
         function subscribeToDS(uint _subPeriod) public payable nonReentrant{
-            //require that he pays the correct price for the subscription
-                //TO DO
+            //require that he pays the correct DHN price for the subscription - TO DO
 
             //require he is not subscribed already
-            require(addressToSub[msg.sender].subbed != true);
+            require(addressToSub[msg.sender].subbed != true, "You are already subbed to this data set.");
 
             //if the user already has info in this DS
             if(addressToSub[msg.sender].sub_init_time!=0){
@@ -139,7 +138,8 @@ contract DataSet is Ownable, ReentrancyGuard{
     //LOGISTIC FUNCTIONS
     //
         function checkUpdateSchedule() public {
-            //to do
+            //TO DO
+
             //if lastUpdated+block.timestamp>lastUpdated+updateFrequency the creator should lose some staked DHN coins
             //we will need to add the buffer later
             if(lastUpdated+block.timestamp>lastUpdated+updateFrequency){
