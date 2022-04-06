@@ -1,22 +1,21 @@
 //SPDX-License-Identifier: SayNode
 pragma solidity 0.8.13;
 
-import "./DataSet.sol";
+import "./DataSet.sol";//SC to be replicated
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";//To interact with ERC20
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buying creation
 
 contract DataSetFactory is ReentrancyGuard{
+
+    //Token Contract address placeholder
+    IERC20 public DHN;
 
     //Owner of this contract
     address public owner;
 
     //Creator arrays
     address[] public creators;
-    /*struct Creator{
-        bool creatorExists;
-        DataSet[] SCaddress;
-    }
-    mapping(address => Creator) public addressToCreator;
-    */
+
     mapping(address => bool) public creatorExists;
 
     //Creator address to the array of his created DS smart contract addresses
@@ -26,8 +25,9 @@ contract DataSetFactory is ReentrancyGuard{
     mapping(string => DataSet) public nameToSC;
 
     //Constructor
-    constructor(){
+    constructor(address _DHNAddress){
         owner = msg.sender;
+        DHN = IERC20(_DHNAddress);
     }
 
     //Create a new DataSet (which requires the creation of a new DataSet.sol SC)
@@ -41,7 +41,7 @@ contract DataSetFactory is ReentrancyGuard{
         ) public nonReentrant
     {
             //MUST REQUIRE THE CREATOR TO DEPOSIT/STAKE SOME DHN TOKENS IN THIS CONTRACT-TO DO
-            
+
             //Creates a new SC dor the new DataSet
             DataSet dataset = new DataSet(_DSname, _URL, _category, _shortDesc, msg.sender, _DSprice, _updateFrequency);
             //Maps the new DS name to its contract address
