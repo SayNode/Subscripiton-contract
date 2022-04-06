@@ -27,6 +27,16 @@ contract DataSet is Ownable, ReentrancyGuard{
         address[] public subscribers;
         //mapping of a subs address to his info
         mapping(address => Subscriber) public addressToSub;
+    //
+    //PAYMENT VARIABLES
+    //
+        struct Deposit {//keep track of when deposits are made (because the creator only gets this money after the sub period of the deposit is over)
+            uint256 deposit_amount;//how much was the deposit
+            uint256 time_of_deposit;//when did the deposit start
+        }
+
+        //array of deposits
+        Deposit[] public deposits;
 
     //
     //DATASET VARIABLES - THESE COME FROM THE FRONT-END/CLIENT INTERACTION
@@ -35,8 +45,8 @@ contract DataSet is Ownable, ReentrancyGuard{
         string private URL;//IPFS URL
         string category;//Data set category
         string shortDesc;//Data set description
-        uint256[] public subscriptionTimes;//Possible sub periods from which the sub can choose
-        uint256 stakeAmount;
+        uint256 subscriptionTime;//Possible sub periods from which the sub can choose (for now lets assume just one for simplicity)
+        uint256 stakeAmount;//------------possibly not needed here
         uint256 DSprice;//Data set price
         uint256 DSrating;//Data set rating
         uint256 creationTime;//Data set time of creation
@@ -66,6 +76,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             URL = _URL;
             category = _category;
             shortDesc = _shortDesc;
+            subscriptionTime= 30 days;//WE ARE CONSIDERING THIS THE ONLY OPTION FOR THE TIME BEING
             DSprice = _DSprice;
             DSrating = 0;
             creationTime = block.timestamp;
@@ -102,13 +113,22 @@ contract DataSet is Ownable, ReentrancyGuard{
         }
 
         function changeSubscriptionPeriods(uint[] memory _subTimes) public onlyOwner {
-            //TO DO
+            //TO DO- ignore for now as we are assuming only one option for subcrition period
+        }
+
+        function withdrawFunds() public onlyOwner{//creator uses this to withdraw available funds
+            uint withdrawable;
+            for(uint i = 0; i<deposits.length; i++){//for every deposit, sees if the deposit was made more than a subcription time ago.
+                                                    //if yes, then add it uo to the total of deposits amount the creator can withdraw
+                if(block.timestamp - deposits[i].time_of_deposit> subscriptionTime) withdrawable = withdrawable + deposits[i].deposit_amount;
+            }
+            //transfers the total withdrawble amount
+            DHN.transferFrom(address(this),msg.sender, withdrawable);
         }
 
         function deleteDS() public onlyOwner {
             //TO DO
-            //it should also activate if the staked DHN goes to zero, which means the creator has not updated
-            //in a long time
+            //it should also activate if the staked DHN goes to zero, which means the creator has not updated in a long time
             //Has to go into DataSetFactory.sol to delete the mapping of this SC before destroying this SC
         }
 
@@ -116,19 +136,24 @@ contract DataSet is Ownable, ReentrancyGuard{
     //SUBSCRIBER FUNCTIONS
     //
         function subscribeToDS(uint _subPeriod) public payable nonReentrant{
-            //require that he pays the correct DHN price for the subscription - TO DO
 
             //require he is not subscribed already
             require(addressToSub[msg.sender].subbed != true, "You are already subbed to this data set.");
+  
+            //require that he pays the correct DHN price for the subscription
+            require(DHN.balanceOf(msg.sender)>= stakeAmount);
+            DHN.transferFrom(msg.sender, address(this), DSprice);
+            deposits.push(Deposit(DSprice, block.timestamp));
 
             //if the user already has info in this DS
             if(addressToSub[msg.sender].sub_init_time!=0){
                 addressToSub[msg.sender].subbed=true;//declare that he is subbed again
                 addressToSub[msg.sender].sub_init_time=block.timestamp;//update the time he subbed
                 addressToSub[msg.sender].sub_time=_subPeriod;//update his subbed time
+                addressToSub[msg.sender].price_paid = DSprice;//update the price paid
             }else{//else
                 subscribers.push(payable(msg.sender));//add new sub address to the record
-                addressToSub[msg.sender] = Subscriber(msg.value, _subPeriod, block.timestamp, true);//create the new sub info
+                addressToSub[msg.sender] = Subscriber(DSprice, _subPeriod, block.timestamp, true);//create the new sub info
                                                                                                     //and map it to his address
                 subCount++;//increment all time sub count
             }
@@ -176,6 +201,10 @@ contract DataSet is Ownable, ReentrancyGuard{
                 if(addressToSub[subscribers[i]].subbed == true)count++;
             }
             return count;
+        }
+
+        function getContractBalance() public view returns(uint){
+            return DHN.balanceOf(address(this));
         }
     
 }

@@ -46,16 +46,21 @@ contract DataSetFactory is ReentrancyGuard{
         ) public nonReentrant
     {
             //MUST REQUIRE THE CREATOR TO DEPOSIT/STAKE SOME DHN TOKENS IN THIS CONTRACT
-            require(DHN.balanceOf(msg.sender)> stakeAmount);
+            //Creator must have the same or more DHN tokens than the required amount
+            require(DHN.balanceOf(msg.sender)>= stakeAmount);
+            //Must aprove that this tokens are sent to the child SC 
+
+
             //Creates a new SC dor the new DataSet
-            DataSet dataset = new DataSet(address(this), DHNAddress, _DSname, _URL, _category, _shortDesc, msg.sender, _DSprice, _updateFrequency);
+            DataSet dataset = new DataSet(address(this), DHNAddress, _DSname, _URL, _category, _shortDesc, msg.sender, 
+                                        _DSprice, _updateFrequency);
             //Maps the new DS name to its contract address
             nameToSC[_DSname]=dataset;
             //Maps the new DS contract address to its creator address
             addressToSC[msg.sender].push(dataset);
 
             if(!creatorExists[msg.sender]){//if it is a new creator
-                creators.push(msg.sender);//add creatopr address to the array of creators
+                creators.push(msg.sender);//add creator address to the array of creators
                 creatorExists[msg.sender] = true;
             }
     }
