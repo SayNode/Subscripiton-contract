@@ -6,6 +6,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";//Garantee only the DS creat
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buying problems
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";//To interact with DHN ERC20 Token
 
+    //
+    //DATASERFACROTY CONTRACT TO INTERACT WITH
+    //
+        interface IDataSetFactory{
+            //TO DO
+        }
+
 contract DataSet is Ownable, ReentrancyGuard{
 
     //
@@ -46,7 +53,7 @@ contract DataSet is Ownable, ReentrancyGuard{
         string category;//Data set category
         string shortDesc;//Data set description
         uint256 subscriptionTime;//Possible sub periods from which the sub can choose (for now lets assume just one for simplicity)
-        uint256 stakeAmount;//------------possibly not needed here
+        uint256 stakeAmount;//the amount a creator has to have staked in DHN to create this contract
         uint256 DSprice;//Data set price
         uint256 DSrating;//Data set rating
         uint256 creationTime;//Data set time of creation
@@ -68,7 +75,8 @@ contract DataSet is Ownable, ReentrancyGuard{
             string memory _shortDesc,
             address _creatorAddress,
             uint256 _DSprice,
-            uint256 _updateFrequency
+            uint256 _updateFrequency,
+            uint256 _stakeAmount
         ) {
             DataSetFactoryAddress = _DataSetFactoryAddress;
             DHN = IERC20(_DHNAddress);
@@ -83,6 +91,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             lastUpdated = block.timestamp;
             updateFrequency = _updateFrequency;
             creatorAddress = _creatorAddress;
+            stakeAmount = _stakeAmount;
         }
 
     //
@@ -126,6 +135,12 @@ contract DataSet is Ownable, ReentrancyGuard{
             DHN.transferFrom(address(this),msg.sender, withdrawable);
         }
 
+        function stakeMoreDHN(uint _amount) public payable{//need to see if we want this or not
+            //TO DO
+            //the creator can replenish his DHN stake if he has lost it by missed date updates
+            //require that currentBalance+_amount<stakeAmount aka his balance of DHN can't be bigger than the pre-established amount
+        }
+
         function deleteDS() public onlyOwner {
             //TO DO
             //it should also activate if the staked DHN goes to zero, which means the creator has not updated in a long time
@@ -141,7 +156,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             require(addressToSub[msg.sender].subbed != true, "You are already subbed to this data set.");
   
             //require that he pays the correct DHN price for the subscription
-            require(DHN.balanceOf(msg.sender)>= stakeAmount);
+            require(DHN.balanceOf(msg.sender)>= stakeAmount, "You don't have enough DHN tokens for the staking requirment.");
             DHN.transferFrom(msg.sender, address(this), DSprice);
             deposits.push(Deposit(DSprice, block.timestamp));
 
@@ -186,8 +201,8 @@ contract DataSet is Ownable, ReentrancyGuard{
         }
 
         function checkIfStillSubbed() public view returns(bool){//is the user still in its sub period?
-            //sees if the user is still subed:
-            //if now -  the initial sub time < the subscription time
+
+            //if: now -  the initial sub time < the subscription time
             if((block.timestamp - addressToSub[msg.sender].sub_init_time)< addressToSub[msg.sender].sub_time){
                 return true;
             }//else
