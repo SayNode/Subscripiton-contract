@@ -4,11 +4,13 @@ pragma solidity 0.8.13;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";//For time calculations
 import "@openzeppelin/contracts/access/Ownable.sol";//Garantee only the DS creator can change its parameters
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buying problems
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";//To interact with ERC20
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";//To interact with DHN ERC20 Token
 
 contract DataSet is Ownable, ReentrancyGuard{
 
-    //Token Contract address placeholder
+    //
+    //DHN TOKEN CONTRACT TO INTERACT
+    //
     IERC20 public DHN;
 
     //
