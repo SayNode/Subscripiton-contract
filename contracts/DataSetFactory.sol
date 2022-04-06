@@ -7,6 +7,9 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buy
 
 contract DataSetFactory is ReentrancyGuard{
 
+    //Variables
+    uint256 stakeAmount;
+
     //Token Contract address placeholder
     IERC20 public DHN;
     address DHNAddress;
@@ -42,10 +45,10 @@ contract DataSetFactory is ReentrancyGuard{
             uint256 _updateFrequency //Dataset update frequency
         ) public nonReentrant
     {
-            //MUST REQUIRE THE CREATOR TO DEPOSIT/STAKE SOME DHN TOKENS IN THIS CONTRACT-TO DO
-
+            //MUST REQUIRE THE CREATOR TO DEPOSIT/STAKE SOME DHN TOKENS IN THIS CONTRACT
+            require(DHN.balanceOf(msg.sender)> stakeAmount);
             //Creates a new SC dor the new DataSet
-            DataSet dataset = new DataSet(DHNAddress, _DSname, _URL, _category, _shortDesc, msg.sender, _DSprice, _updateFrequency);
+            DataSet dataset = new DataSet(address(this), DHNAddress, _DSname, _URL, _category, _shortDesc, msg.sender, _DSprice, _updateFrequency);
             //Maps the new DS name to its contract address
             nameToSC[_DSname]=dataset;
             //Maps the new DS contract address to its creator address

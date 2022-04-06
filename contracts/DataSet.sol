@@ -36,6 +36,7 @@ contract DataSet is Ownable, ReentrancyGuard{
         string category;//Data set category
         string shortDesc;//Data set description
         uint256[] public subscriptionTimes;//Possible sub periods from which the sub can choose
+        uint256 stakeAmount;
         uint256 DSprice;//Data set price
         uint256 DSrating;//Data set rating
         uint256 creationTime;//Data set time of creation
@@ -43,11 +44,13 @@ contract DataSet is Ownable, ReentrancyGuard{
         uint256 updateFrequency;//How often if the DS updated?
         uint256 subCount = 0;//See how many people have subscribed to this DS since it was created;
         address creatorAddress;//Address of the creator
+        address DataSetFactoryAddress;//Keeps the adress of the DataSetFactory.sol
 
     //
     //SETTING INITIAL VARIABLES
     //
         constructor(
+            address _DataSetFactoryAddress,
             address _DHNAddress,
             string memory _DSname,
             string memory _URL,
@@ -57,6 +60,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             uint256 _DSprice,
             uint256 _updateFrequency
         ) {
+            DataSetFactoryAddress = _DataSetFactoryAddress;
             DHN = IERC20(_DHNAddress);
             DSname = _DSname;
             URL = _URL;
@@ -105,6 +109,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             //TO DO
             //it should also activate if the staked DHN goes to zero, which means the creator has not updated
             //in a long time
+            //Has to go into DataSetFactory.sol to delete the mapping of this SC before destroying this SC
         }
 
     //
