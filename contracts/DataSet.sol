@@ -4,8 +4,12 @@ pragma solidity 0.8.13;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";//For time calculations
 import "@openzeppelin/contracts/access/Ownable.sol";//Garantee only the DS creator can change its parameters
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buying problems
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";//To interact with ERC20
 
 contract DataSet is Ownable, ReentrancyGuard{
+
+    //Token Contract address placeholder
+    IERC20 public DHN;
 
     //
     //USER VARIABLES
@@ -42,6 +46,7 @@ contract DataSet is Ownable, ReentrancyGuard{
     //SETTING INITIAL VARIABLES
     //
         constructor(
+            address _DHNAddress,
             string memory _DSname,
             string memory _URL,
             string memory _category,
@@ -50,6 +55,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             uint256 _DSprice,
             uint256 _updateFrequency
         ) {
+            DHN = IERC20(_DHNAddress);
             DSname = _DSname;
             URL = _URL;
             category = _category;

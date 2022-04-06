@@ -9,6 +9,7 @@ contract DataSetFactory is ReentrancyGuard{
 
     //Token Contract address placeholder
     IERC20 public DHN;
+    address DHNAddress;
 
     //Owner of this contract
     address public owner;
@@ -27,6 +28,7 @@ contract DataSetFactory is ReentrancyGuard{
     //Constructor
     constructor(address _DHNAddress){
         owner = msg.sender;
+        DHNAddress = _DHNAddress;
         DHN = IERC20(_DHNAddress);
     }
 
@@ -43,7 +45,7 @@ contract DataSetFactory is ReentrancyGuard{
             //MUST REQUIRE THE CREATOR TO DEPOSIT/STAKE SOME DHN TOKENS IN THIS CONTRACT-TO DO
 
             //Creates a new SC dor the new DataSet
-            DataSet dataset = new DataSet(_DSname, _URL, _category, _shortDesc, msg.sender, _DSprice, _updateFrequency);
+            DataSet dataset = new DataSet(DHNAddress, _DSname, _URL, _category, _shortDesc, msg.sender, _DSprice, _updateFrequency);
             //Maps the new DS name to its contract address
             nameToSC[_DSname]=dataset;
             //Maps the new DS contract address to its creator address
