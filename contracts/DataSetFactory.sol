@@ -4,7 +4,7 @@ pragma solidity 0.8.13;
 import "./DataSet.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buying creation
 
-contract DataSetFactory is DataSet {
+contract DataSetFactory is ReentrancyGuard{
 
     //Owner of this contract
     address public owner;
