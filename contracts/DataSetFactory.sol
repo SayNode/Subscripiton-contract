@@ -52,18 +52,22 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
                 string memory _shortDesc,//Dataset short description
                 uint256 _DSprice,//Dataset price
                 uint256 _updateFrequency //Dataset update frequency
-            ) public nonReentrant
+            ) public payable nonReentrant
         {
-                //MUST REQUIRE THE CREATOR TO DEPOSIT/STAKE SOME DHN TOKENS IN THIS CONTRACT - TO DO
+                
 
                 //Creator must have the same or more DHN tokens than the required amount
                 require(DHN.balanceOf(msg.sender)>= stakeAmount);
-                //Must aprove that this tokens are sent to the child SC 
-
+                
+                //Stake in this contract
+                DHN.approve(address(this), stakeAmount);
 
                 //Creates a new SC dor the new DataSet
                 DataSet dataset = new DataSet(address(this), DHNAddress, _DSname, _URL, _category, _shortDesc, msg.sender, 
                                             _DSprice, _updateFrequency, stakeAmount);
+                //Must send the stake DHN tokens from this contract to the newly created child
+                DHN.transferFrom(msg.sender, dataset, stakeAmount);//TO DO- see what dataset has (how to isolate the address)
+
                 //Maps the new DS name to its contract address
                 nameToSC[_DSname]=dataset;
                 //Maps the new DS contract address to its creator address
