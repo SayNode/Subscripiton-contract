@@ -51,7 +51,8 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
                 string memory _category,//Dataset category
                 string memory _shortDesc,//Dataset short description
                 uint256 _DSprice,//Dataset price
-                uint256 _updateFrequency //Dataset update frequency
+                uint256 _updateFrequency, //Dataset update frequency
+                uint256 penalty //how much staked DHN the creator looses for missing a deadline. Dependes on the upload freq
             ) public payable nonReentrant
         {
                 
@@ -64,7 +65,7 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
 
                 //Creates a new SC dor the new DataSet
                 DataSet dataset = new DataSet(address(this), DHNAddress, _DSname, _URL, _category, _shortDesc, msg.sender, 
-                                            _DSprice, _updateFrequency, stakeAmount);
+                                            _DSprice, _updateFrequency, stakeAmount, penalty);
                 //Must send the stake DHN tokens from this contract to the newly created child
                 DHN.transferFrom(msg.sender, payable(address(dataset)), stakeAmount);
 

@@ -54,6 +54,7 @@ contract DataSet is Ownable, ReentrancyGuard{
         string shortDesc;//Data set description
         uint256 subscriptionTime;//Possible sub periods from which the sub can choose (for now lets assume just one for simplicity)
         uint256 stakeAmount;//the amount a creator has to have staked in DHN to create this contract
+        uint256 penalty;//how much staked DHN the creator looses for missing a deadline
         uint256 DSprice;//Data set price
         uint256 DSrating;//Data set rating
         uint256 creationTime;//Data set time of creation
@@ -76,7 +77,8 @@ contract DataSet is Ownable, ReentrancyGuard{
             address _creatorAddress,
             uint256 _DSprice,
             uint256 _updateFrequency,
-            uint256 _stakeAmount
+            uint256 _stakeAmount,
+            uint256 _penalty
         ) {
             DataSetFactoryAddress = _DataSetFactoryAddress;
             DHN = IERC20(_DHNAddress);
@@ -92,6 +94,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             updateFrequency = _updateFrequency;
             creatorAddress = _creatorAddress;
             stakeAmount = _stakeAmount;
+            penalty = _penalty;
         }
 
     //
@@ -197,6 +200,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             //we will need to add the buffer later
             if(lastUpdated+block.timestamp>lastUpdated+updateFrequency){
                 //do something
+                stakeAmount = stakeAmount-penalty;
             }
         }
 
