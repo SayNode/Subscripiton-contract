@@ -5,13 +5,9 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";//For time calculations
 import "@openzeppelin/contracts/access/Ownable.sol";//Garantee only the DS creator can change its parameters
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buying problems
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";//To interact with DHN ERC20 Token
+import "contracts/DataSetFactory.sol";//Access parent contract
 
-    //
-    //DATASERFACROTY CONTRACT TO INTERACT WITH
-    //
-        interface IDataSetFactory{
-            //TO DO
-        }
+
 
 contract DataSet is Ownable, ReentrancyGuard{
 
@@ -22,7 +18,7 @@ contract DataSet is Ownable, ReentrancyGuard{
     //
     //DATASETFACTORY CONTRACT TO INTERACT
     //
-    IDataSetFactory public DSF;
+    DataSetFactory public DSF;
 
     //
     //USER VARIABLES
@@ -66,7 +62,6 @@ contract DataSet is Ownable, ReentrancyGuard{
         uint256 updateFrequency;//How often if the DS updated?
         uint256 subCount = 0;//See how many people have subscribed to this DS since it was created;
         address creatorAddress;//Address of the creator
-        address DataSetFactoryAddress;//Keeps the adress of the DataSetFactory.sol
 
     //
     //SETTING INITIAL VARIABLES
@@ -84,8 +79,8 @@ contract DataSet is Ownable, ReentrancyGuard{
             uint256 _stakeAmount,
             uint256 _penalty
         ) {
-            DataSetFactoryAddress = _DataSetFactoryAddress;
-            DHN = IERC20(_DHNAddress);
+            DSF = DataSetFactory(_DataSetFactoryAddress);//Interact with parent contract
+            DHN = IERC20(_DHNAddress);//Interact with DHN token contract
             DSname = _DSname;
             URL = _URL;
             category = _category;
@@ -143,15 +138,26 @@ contract DataSet is Ownable, ReentrancyGuard{
         }
 
         function stakeMoreDHN(uint _amount) public payable{//need to see if we want this or not
-            //TO DO
+            
             //the creator can replenish his DHN stake if he has lost it by missed date updates
+                //TO DO
             //require that currentBalance+_amount<stakeAmount aka his balance of DHN can't be bigger than the pre-established amount
+                //TO DO
         }
 
         function deleteDS() public onlyOwner {
-            //TO DO
+            
             //it should also activate if the staked DHN goes to zero, which means the creator has not updated in a long time
+                //TO DO
+
             //Has to go into DataSetFactory.sol to delete the mapping of this SC before destroying this SC
+            DSF.deleteChild(address.this);
+
+            //Has to give back to subs the money they paid for their current subscription because it want be finished
+                //TO DO
+            
+            //selfdestructs and gives to the contract owner all the money he has earned and not withdrawn and his staked amount
+                //TO DO
         }
 
     //

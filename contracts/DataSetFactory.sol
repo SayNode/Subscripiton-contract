@@ -23,13 +23,21 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
         address[] public creators;
 
         //Quick way to see if the creator is new or not
+        //Front end use: Used to search DSs by cretaor
         mapping(address => bool) public creatorExists;
 
         //Creator address to the array of his created DS smart contract addresses
+        //Front end use: Used to search DSs by cretaor
         mapping(address => DataSet[]) public addressToSC;
 
         //Mapping of a DS name to the corresponding DataSet smart contract
+        //Front end use: Used to search DSs by its name
         mapping(string => DataSet) public nameToSC;
+
+        //Quick way to see if the DataSet contract is new or not
+        //Front end use: Used to search DSs and see if they exist or not
+        //Complements the previous teo mappings
+        mapping(DataSet => bool) public contractExists;
 
     //
     //CONSTRUCTOR
@@ -39,6 +47,15 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
             DHNAddress = _DHNAddress;
             DHN = IERC20(_DHNAddress);
         }
+        
+    //
+    //MODIFIERS
+    //
+    modifier onlyChildContracts(){
+        require(contractExists[msg.sender]==true);//msg.sender here is the DataSet.sol contract
+        _;
+
+    }
 
     //
     //FUNCTIONS
@@ -73,6 +90,9 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
                 DHN.transferFrom(msg.sender, payable(address(dataset)), stakeAmount);
                 // or payable(address(dataset)).call{value:  stakeAmount}("");
 
+                //Update this mapping to say that this contract address still exists
+                contractExists[dataset]=true;
+
                 //Maps the new DS name to its contract address
                 nameToSC[_DSname]=dataset;
                 //Maps the new DS contract address to its creator address
@@ -91,10 +111,9 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
 
         }
 
-        function deleteDS() public {//will delete the Data Set of a creator because he selfdestructed the corresponding DataSet.sol
-                                    //is used as an interface in DataSet.sol
-            //TO DO
-
+        function deleteChild(address _DS_address) external onlyChildContracts(){//will delete the Data Set of a creator because 
+                                                                        //he selfdestructed the corresponding DataSet.sol
+            contractExists[_DS_address]==false;
         }
     
 }
