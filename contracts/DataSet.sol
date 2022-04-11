@@ -15,6 +15,7 @@ contract DataSet is Ownable, ReentrancyGuard{
     //DHN TOKEN CONTRACT TO INTERACT
     //
     IERC20 public DHN;
+    
     //
     //DATASETFACTORY CONTRACT TO INTERACT
     //
@@ -135,6 +136,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             }
             //transfers the total withdrawble amount
             DHN.transferFrom(address(this),msg.sender, withdrawable);
+            
         }
 
         function stakeMoreDHN(uint _amount) public payable{//need to see if we want this or not
@@ -153,10 +155,19 @@ contract DataSet is Ownable, ReentrancyGuard{
             //Has to go into DataSetFactory.sol to delete the mapping of this SC before destroying this SC
             DSF.deleteChild(address.this);
 
+            //Owner gets his money
+            uint withdrawable;
+            for(uint i = 0; i<deposits.length; i++){//for every deposit, sees if the deposit was made more than a subcription time ago.
+                                                    //if yes, then add it uo to the total of deposits amount the creator can withdraw
+                if(block.timestamp - deposits[i].time_of_deposit> subscriptionTime) withdrawable = withdrawable + deposits[i].deposit_amount;
+            }
+            //transfers the total withdrawble amount
+            DHN.transferFrom(address(this),msg.sender, withdrawable);
+
             //Has to give back to subs the money they paid for their current subscription because it want be finished
                 //TO DO
             
-            //selfdestructs and gives to the contract owner all the money he has earned and not withdrawn and his staked amount
+            //selfdestructs
                 //TO DO
         }
 
