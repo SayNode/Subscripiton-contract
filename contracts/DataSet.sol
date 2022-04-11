@@ -19,6 +19,10 @@ contract DataSet is Ownable, ReentrancyGuard{
     //DHN TOKEN CONTRACT TO INTERACT
     //
     IERC20 public DHN;
+    //
+    //DATASETFACTORY CONTRACT TO INTERACT
+    //
+    IDataSetFactory public DSF;
 
     //
     //USER VARIABLES

@@ -52,7 +52,9 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
                 string memory _shortDesc,//Dataset short description
                 uint256 _DSprice,//Dataset price
                 uint256 _updateFrequency, //Dataset update frequency
-                uint256 penalty //how much staked DHN the creator looses for missing a deadline. Dependes on the upload freq
+                uint256 penalty //how much staked DHN the creator looses for missing a deadline. 
+                                //Dependes on the upload freq, so for now it is always the same but in the long run we will
+                                //do it with a conditional
             ) public payable nonReentrant
         {
                 
@@ -62,12 +64,14 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
                 
                 //Stake in this contract
                 DHN.approve(address(this), stakeAmount);
+                //or DHN.transfer(address(this), stakeAmount)
 
                 //Creates a new SC dor the new DataSet
                 DataSet dataset = new DataSet(address(this), DHNAddress, _DSname, _URL, _category, _shortDesc, msg.sender, 
                                             _DSprice, _updateFrequency, stakeAmount, penalty);
                 //Must send the stake DHN tokens from this contract to the newly created child
                 DHN.transferFrom(msg.sender, payable(address(dataset)), stakeAmount);
+                // or payable(address(dataset)).call{value:  stakeAmount}("");
 
                 //Maps the new DS name to its contract address
                 nameToSC[_DSname]=dataset;
@@ -86,6 +90,7 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
             stakeAmount = _stakeAmount;
 
         }
+
         function deleteDS() public {//will delete the Data Set of a creator because he selfdestructed the corresponding DataSet.sol
                                     //is used as an interface in DataSet.sol
             //TO DO
