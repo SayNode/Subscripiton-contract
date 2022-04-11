@@ -66,7 +66,7 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
                 DataSet dataset = new DataSet(address(this), DHNAddress, _DSname, _URL, _category, _shortDesc, msg.sender, 
                                             _DSprice, _updateFrequency, stakeAmount);
                 //Must send the stake DHN tokens from this contract to the newly created child
-                DHN.transferFrom(msg.sender, dataset, stakeAmount);//TO DO- see what dataset has (how to isolate the address)
+                DHN.transferFrom(msg.sender, payable(address(dataset)), stakeAmount);
 
                 //Maps the new DS name to its contract address
                 nameToSC[_DSname]=dataset;
