@@ -174,7 +174,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             //Has to give back to subs the money they paid for their current subscription because it want be finished
             for(uint i = 0; i<deposits.length; i++){
                 if(deposits[i].deposit_amount>0){
-                    DHN.transferFrom(address(this),deposits[i].subscriber_address, deposits[i].deposit_amount);
+                    DHN.transferFrom(address(this),payable(deposits[i].subscriber_address), deposits[i].deposit_amount);
                     deposits[i].deposit_amount=0;
                 }
             }
