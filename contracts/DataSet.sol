@@ -56,6 +56,7 @@ contract DataSet is Ownable, ReentrancyGuard{
         string shortDesc;//Data set description
         uint256 subscriptionTime;//Possible sub periods from which the sub can choose (for now lets assume just one for simplicity)
         uint256 stakeAmount;//the amount a creator has to have staked in DHN to create this contract
+        uint256 stakedAmount;//the amount a creator still has staked in DHN
         uint256 penalty;//how much staked DHN the creator looses for missing a deadline
         uint256 DSprice;//Data set price
         uint256 DSrating;//Data set rating
@@ -144,11 +145,12 @@ contract DataSet is Ownable, ReentrancyGuard{
         }
 
         function stakeMoreDHN(uint _amount) public payable{//need to see if we want this or not
-            
+            //require that currentBalance+_amount<stakeAmount aka his balance of DHN can't be bigger than the pre-established amount  
+            require(stakedAmount+_amount<=stakeAmount, "Can't re-stake that much");
             //the creator can replenish his DHN stake if he has lost it by missed date updates
-                //TO DO
-            //require that currentBalance+_amount<stakeAmount aka his balance of DHN can't be bigger than the pre-established amount
-                //TO DO
+            DHN.transfer(address(this), _amount);
+            stakedAmount = stakedAmount + _amount;
+
         }
 
         function deleteDS() public onlyOwner {
