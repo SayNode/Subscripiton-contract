@@ -15,7 +15,7 @@ contract DataSet is Ownable, ReentrancyGuard{
     //DHN TOKEN CONTRACT TO INTERACT
     //
     IERC20 public DHN;
-    
+
     //
     //DATASETFACTORY CONTRACT TO INTERACT
     //
@@ -39,6 +39,7 @@ contract DataSet is Ownable, ReentrancyGuard{
     //PAYMENT VARIABLES
     //
         struct Deposit {//keep track of when deposits are made (because the creator only gets this money after the sub period of the deposit is over)
+            address subscriber_address;
             uint256 deposit_amount;//how much was the deposit
             uint256 time_of_deposit;//when did the deposit start
         }
@@ -132,7 +133,10 @@ contract DataSet is Ownable, ReentrancyGuard{
             uint withdrawable;
             for(uint i = 0; i<deposits.length; i++){//for every deposit, sees if the deposit was made more than a subcription time ago.
                                                     //if yes, then add it uo to the total of deposits amount the creator can withdraw
-                if(block.timestamp - deposits[i].time_of_deposit> subscriptionTime) withdrawable = withdrawable + deposits[i].deposit_amount;
+                if(block.timestamp - deposits[i].time_of_deposit> subscriptionTime){
+                    withdrawable = withdrawable + deposits[i].deposit_amount;
+                    deposits[i].deposit_amount=0;
+                } 
             }
             //transfers the total withdrawble amount
             DHN.transferFrom(address(this),msg.sender, withdrawable);
@@ -159,16 +163,24 @@ contract DataSet is Ownable, ReentrancyGuard{
             uint withdrawable;
             for(uint i = 0; i<deposits.length; i++){//for every deposit, sees if the deposit was made more than a subcription time ago.
                                                     //if yes, then add it uo to the total of deposits amount the creator can withdraw
-                if(block.timestamp - deposits[i].time_of_deposit> subscriptionTime) withdrawable = withdrawable + deposits[i].deposit_amount;
+                if(block.timestamp - deposits[i].time_of_deposit> subscriptionTime){
+                    withdrawable = withdrawable + deposits[i].deposit_amount;
+                    deposits[i].deposit_amount=0;
+                } 
             }
             //transfers the total withdrawble amount
             DHN.transferFrom(address(this),msg.sender, withdrawable);
 
             //Has to give back to subs the money they paid for their current subscription because it want be finished
-                //TO DO
+            for(uint i = 0; i<deposits.length; i++){
+                if(deposits[i].deposit_amount>0){
+                    DHN.transferFrom(address(this),deposits[i].subscriber_address, deposits[i].deposit_amount);
+                    deposits[i].deposit_amount=0;
+                }
+            }
             
             //selfdestructs
-                //TO DO
+                selfdestruct(creatorAddress);
         }
 
     //
@@ -182,7 +194,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             //require that he pays the correct DHN price for the subscription
             require(DHN.balanceOf(msg.sender)>= stakeAmount, "You don't have enough DHN tokens for the staking requirment.");
             DHN.transferFrom(msg.sender, address(this), DSprice);
-            deposits.push(Deposit(DSprice, block.timestamp));
+            deposits.push(Deposit(msg.sender,DSprice, block.timestamp));
 
             //if the user already has info in this DS
             if(addressToSub[msg.sender].sub_init_time!=0){
