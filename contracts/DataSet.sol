@@ -2,14 +2,13 @@
 pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";//For time calculations
-import "@openzeppelin/contracts/access/Ownable.sol";//Garantee only the DS creator can change its parameters
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buying problems
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";//To interact with DHN ERC20 Token
 import "contracts/DataSetFactory.sol";//Access parent contract
 
 
 
-contract DataSet is Ownable, ReentrancyGuard{
+contract DataSet is ReentrancyGuard{
 
     //
     //DHN TOKEN CONTRACT TO INTERACT
@@ -106,6 +105,11 @@ contract DataSet is Ownable, ReentrancyGuard{
             require(addressToSub[msg.sender].subbed == true);
             _;
         }
+
+        modifier onlyOwner() {
+        require(owner==creatorAddress, "Ownable: caller is not the owner");
+        _;
+    }
 
     //
     //CREATOR FUNCTIONS

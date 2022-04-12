@@ -34,9 +34,9 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
         //Front end use: Used to search DSs by its name
         mapping(string => DataSet) public nameToSC;
 
-        //Quick way to see if the DataSet contract is new or not
+        //Quick way to see if the DataSet contract address is new or not
         //Front end use: Used to search DSs and see if they exist or not
-        //Complements the previous teo mappings
+        //Complements the previous two mappings
         mapping(address => bool) public contractExists;
 
     //
@@ -80,8 +80,7 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
                 require(DHN.balanceOf(msg.sender)>= stakeAmount);
                 
                 //Stake in this contract
-                DHN.approve(address(this), stakeAmount);
-                //or DHN.transfer(address(this), stakeAmount)
+                DHN.approve(address(this), stakeAmount);//isto tem de ser feito no DHN contract no backend em vez daqui TO DO
 
                 //Creates a new SC dor the new DataSet
                 DataSet dataset = new DataSet(address(this), DHNAddress, _DSname, _URL, _category, _shortDesc, msg.sender, 
@@ -111,7 +110,7 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
 
         }
 
-        function deleteChild(address _DS_address) external onlyChildContracts(){//will delete the Data Set of a creator because 
+        function deleteChild(address _DS_address) external view onlyChildContracts(){//will delete the Data Set of a creator because 
                                                                         //he selfdestructed the corresponding DataSet.sol
             contractExists[_DS_address]==false;
         }
