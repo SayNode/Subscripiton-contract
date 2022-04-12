@@ -80,7 +80,7 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
                 require(DHN.balanceOf(msg.sender)>= stakeAmount);
                 
                 //Stake in this contract
-                DHN.approve(address(this), stakeAmount);//isto tem de ser feito no DHN contract no backend em vez daqui TO DO
+                DHN.approve(address(this), stakeAmount);//Must aprove with wallet
 
                 //Creates a new SC dor the new DataSet
                 DataSet dataset = new DataSet(address(this), DHNAddress, _DSname, _URL, _category, _shortDesc, msg.sender, 
