@@ -49,21 +49,21 @@ contract DataSet is ReentrancyGuard{
     //
     //DATASET VARIABLES - THESE COME FROM THE FRONT-END/CLIENT INTERACTION
     //
-        string DSname;//Data set name
+        string public DSname;//Data set name
         string private URL;//IPFS URL
-        string category;//Data set category
-        string shortDesc;//Data set description
-        uint256 subscriptionTime;//Possible sub periods from which the sub can choose (for now lets assume just one for simplicity)
-        uint256 stakeAmount;//the amount a creator has to have staked in DHN to create this contract
-        uint256 stakedAmount;//the amount a creator still has staked in DHN
-        uint256 penalty;//how much staked DHN the creator looses for missing a deadline
-        uint256 DSprice;//Data set price
-        uint256 DSrating;//Data set rating
-        uint256 creationTime;//Data set time of creation
-        uint256 lastUpdated;//Keeps track of the time the DS was last updated
-        uint256 updateFrequency;//How often if the DS updated?
-        uint256 subCount = 0;//See how many people have subscribed to this DS since it was created;
-        address creatorAddress;//Address of the creator
+        string public category;//Data set category
+        string public shortDesc;//Data set description
+        uint256 public subscriptionTime;//Possible sub periods from which the sub can choose (for now lets assume just one for simplicity)
+        uint256 public stakeAmount;//the amount a creator has to have staked in DHN to create this contract
+        uint256 public stakedAmount;//the amount a creator still has staked in DHN
+        uint256 public penalty;//how much staked DHN the creator looses for missing a deadline
+        uint256 public DSprice;//Data set price
+        uint256 public DSrating;//Data set rating
+        uint256 public creationTime;//Data set time of creation
+        uint256 public lastUpdated;//Keeps track of the time the DS was last updated
+        uint256 public updateFrequency;//How often if the DS updated?
+        uint256 public subCount = 0;//See how many people have subscribed to this DS since it was created;
+        address public creatorAddress;//Address of the creator
 
     //
     //SETTING INITIAL VARIABLES
