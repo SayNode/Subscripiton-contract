@@ -107,7 +107,7 @@ contract DataSet is ReentrancyGuard{
         }
 
         modifier onlyOwner() {
-        require(owner==creatorAddress, "Ownable: caller is not the owner");
+        require(msg.sender==creatorAddress, "Ownable: caller is not the owner");
         _;
     }
 

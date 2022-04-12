@@ -54,7 +54,6 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
     modifier onlyChildContracts(){
         require(contractExists[msg.sender]==true);//msg.sender here is the DataSet. sol contract
         _;
-
     }
 
     //
