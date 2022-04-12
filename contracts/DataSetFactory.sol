@@ -37,7 +37,7 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
         //Quick way to see if the DataSet contract is new or not
         //Front end use: Used to search DSs and see if they exist or not
         //Complements the previous teo mappings
-        mapping(DataSet => bool) public contractExists;
+        mapping(address => bool) public contractExists;
 
     //
     //CONSTRUCTOR
@@ -52,7 +52,7 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
     //MODIFIERS
     //
     modifier onlyChildContracts(){
-        require(contractExists[msg.sender]==true);//msg.sender here is the DataSet.sol contract
+        require(contractExists[msg.sender]==true);//msg.sender here is the DataSet. sol contract
         _;
 
     }
@@ -91,7 +91,7 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
                 // or payable(address(dataset)).call{value:  stakeAmount}("");
 
                 //Update this mapping to say that this contract address still exists
-                contractExists[dataset]=true;
+                contractExists[address(dataset)]=true;
 
                 //Maps the new DS name to its contract address
                 nameToSC[_DSname]=dataset;

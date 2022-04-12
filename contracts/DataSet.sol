@@ -159,7 +159,7 @@ contract DataSet is Ownable, ReentrancyGuard{
                 //TO DO
 
             //Has to go into DataSetFactory.sol to delete the mapping of this SC before destroying this SC
-            DSF.deleteChild(address.this);
+            DSF.deleteChild(address(this));
 
             //Owner gets his money
             uint withdrawable;
@@ -182,7 +182,7 @@ contract DataSet is Ownable, ReentrancyGuard{
             }
             
             //selfdestructs
-                selfdestruct(creatorAddress);
+                selfdestruct(payable(creatorAddress));
         }
 
     //
