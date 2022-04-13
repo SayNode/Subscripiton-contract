@@ -4,7 +4,7 @@ import os
 
 def deploy():
     #A)For local ganache
-    account = accounts[0] 
+    dohrnii_account = accounts[0] 
 
     #B)To import a wallet you need to do on the terminal:
         #1)brownie accounts new <name of the account>
@@ -23,17 +23,25 @@ def deploy():
         #account = accounts.add(config["wallets"]["from_key"])
     
     #Deployment
-    dataset_factory = DataSetFactory.deploy("0x2a90E736b550E3A7AF5cD7C18F74AADa08b7410F", {"from": account})
+    #dohrnii_token_contrat = DHN.deploy()=>we will probably import an existing DHN contract
+    dataset_factory = DataSetFactory.deploy("0x2a90E736b550E3A7AF5cD7C18F74AADa08b7410F", {"from": dohrnii_account})
     time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    return dataset_factory, account
+    return dataset_factory
 
 def main():
 
     #Get the DataSetFactory.sol instance after deployment and the account used
-    (DSF, account)=deploy()
+    DSF=deploy()
+    dohrnii_account = accounts[0]
+    ds_creator_account = accounts[1]
+    ds_subscriber_account = accounts[2]
 
-    #Testing a simple function from DataSetFactory.sol
+    #Testing a changeStakeAmount() from DataSetFactory.sol
     print(DSF.stakeAmount())
-    DSF.changeStakeAmount(2, {"from": account})
+    DSF.changeStakeAmount(2, {"from": dohrnii_account})
     time.sleep(1)#avoids known Brownie error "web3 is not connected"
     print(DSF.stakeAmount())
+
+    #Testing createDS() from DataSetFactory.sol
+    DSF.createDS("Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
+                 "Games","Tetris statistics and data", 10, 30, 2)
