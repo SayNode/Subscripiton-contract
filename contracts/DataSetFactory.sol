@@ -2,9 +2,9 @@
 pragma solidity 0.8.13;
 
 import "./DataSet.sol";//SC to be replicated
-import "@openzeppelin/contracts/access/Ownable.sol";//Garantee only the DS creator can change its parameters
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";//To interact with ERC20
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buying creation
+import "OpenZeppelin/openzeppelin-contracts@4.4.2/contracts/access/Ownable.sol";//Garantee only the DS creator can change its parameters
+import "OpenZeppelin/openzeppelin-contracts@4.4.2/contracts/token/ERC20/IERC20.sol";//To interact with ERC20
+import "OpenZeppelin/openzeppelin-contracts@4.4.2/contracts/security/ReentrancyGuard.sol";//Avoid double buying creation
 
 contract DataSetFactory is ReentrancyGuard, Ownable{
 

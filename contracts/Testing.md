@@ -3,7 +3,7 @@
 - [x] Contract creation; Use this: "Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu","Games","Tetris statistics and data", 10, 30,2 and DHN address: 0x2a90E736b550E3A7AF5cD7C18F74AADa08b7410F
 - [x] Staking;
 - [x] Basic functions in DataSet.sol;
-- [x] Buying/subbing to a dataset;
+- [x] Buying/subbing to a dataset (addressToSub[msg.sender].subbed stays false, have to find out why);
 - [ ] Complex functions in DataSet.sol;
 - [ ] Withdrawing money from a dataset (creator);
 - [ ] Deleting a dataset;

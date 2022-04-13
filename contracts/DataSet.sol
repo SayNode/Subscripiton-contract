@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: SayNode
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";//For time calculations
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//Avoid double buying problems
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";//To interact with DHN ERC20 Token
+import "OpenZeppelin/openzeppelin-contracts@4.4.2/contracts/utils/math/SafeMath.sol";//For time calculations
+import "OpenZeppelin/openzeppelin-contracts@4.4.2/contracts/security/ReentrancyGuard.sol";//Avoid double buying problems
+import "OpenZeppelin/openzeppelin-contracts@4.4.2/contracts/token/ERC20/IERC20.sol";//To interact with DHN ERC20 Token
 import "contracts/DataSetFactory.sol";//Access parent contract
 
 
