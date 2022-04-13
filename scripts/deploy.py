@@ -25,7 +25,15 @@ def deploy():
     #Deployment
     dataset_factory = DataSetFactory.deploy("0x2a90E736b550E3A7AF5cD7C18F74AADa08b7410F", {"from": account})
     time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    print(dataset_factory)
+    return dataset_factory, account
 
 def main():
-    deploy()
+
+    #Get the DataSetFactory.sol instance after deployment and the account used
+    (DSF, account)=deploy()
+
+    #Testing a simple function from DataSetFactory.sol
+    print(DSF.stakeAmount())
+    DSF.changeStakeAmount(2, {"from": account})
+    time.sleep(1)#avoids known Brownie error "web3 is not connected"
+    print(DSF.stakeAmount())

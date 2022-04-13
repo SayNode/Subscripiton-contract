@@ -13,7 +13,7 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
     //
 
         //Minimum amount to stake
-        uint256 stakeAmount;
+        uint256 public stakeAmount;
 
         //Token Contract address placeholder
         IERC20 public DHN;
