@@ -76,7 +76,7 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
                 
 
                 //Creator must have the same or more DHN tokens than the required amount
-                require(DHN.balanceOf(msg.sender)>= stakeAmount);
+                require(DHN.balanceOf(msg.sender)>= stakeAmount, "Not enough DHN tokens");
                 
                 //Stake in this contract
                 DHN.approve(address(this), stakeAmount);//Must aprove with wallet
