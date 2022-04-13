@@ -95,6 +95,7 @@ contract DataSet is ReentrancyGuard{
             updateFrequency = _updateFrequency;
             creatorAddress = _creatorAddress;
             stakeAmount = _stakeAmount;
+            stakeAmount = _stakeAmount;
             penalty = _penalty;
         }
 
@@ -198,7 +199,8 @@ contract DataSet is ReentrancyGuard{
             require(addressToSub[msg.sender].subbed != true, "You are already subbed to this data set.");
   
             //require that he pays the correct DHN price for the subscription
-            require(DHN.balanceOf(msg.sender)>= stakeAmount, "You don't have enough DHN tokens for the staking requirment.");
+            require(DHN.balanceOf(msg.sender)>= DSprice, "You don't have enough DHN tokens for the price requirment.");
+            //DHN.approve(address(this), DSprice);//have to approve it firt in the DHN contract
             DHN.transferFrom(msg.sender, address(this), DSprice);
             deposits.push(Deposit(msg.sender,DSprice, block.timestamp));
 
