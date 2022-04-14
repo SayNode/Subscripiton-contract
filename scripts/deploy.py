@@ -54,12 +54,21 @@ def main():
     DS = DSF.createDS("Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
                  "Games","Tetris statistics and data", 10, 30, 2, {"from": ds_creator_account})
     time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    print(DSF.creatorExists(ds_creator_account))
     
+
 #Accesing the creator DS contract
     DS_address = DSF.nameToSC("Tetris",{"from": ds_subscriber_account1})
     time.sleep(1)#avoids known Brownie error "web3 is not connected"
     DS = DataSet.at(DS_address)
     time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    print(DS.DSname())
+
+#Subscribing to a DS
+    DHN.transfer(ds_subscriber_account1, 3000, {"from": dohrnii_account})
     time.sleep(1)#avoids known Brownie error "web3 is not connected"
+    DHN.approve(DS,300, {"from": ds_subscriber_account1})
+    time.sleep(1)#avoids known Brownie error "web3 is not connected"
+    DS.subscribeToDS(30,{"from": ds_subscriber_account1})
+    time.sleep(1)#avoids known Brownie error "web3 is not connected"
+    print(DS.addressToSub(ds_subscriber_account1))
+    time.sleep(1)#avoids known Brownie error "web3 is not connected"
+    
