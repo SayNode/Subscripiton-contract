@@ -36,39 +36,43 @@ def main():
     (DSF,DHN)=deploy()
 
     #Define accounts
-    dohrnii_account = accounts[0]
-    ds_creator_account = accounts[1]
-    ds_subscriber_account1 = accounts[2]
-    ds_subscriber_account2 = accounts[3]
+    dohrnii_account = accounts[0] #mints the DHN tokens
+    ds_creator_account = accounts[1] #creates a nem Data Set callled "Tetris"
+    ds_subscriber_account1 = accounts[2] #will subscribe to the "Tetris" dataset
+    ds_subscriber_account2 = accounts[3] #will also subscribe to the "Tetris" dataset
 
-#Testing a changeStakeAmount() from DataSetFactory.sol
-    #print(DSF.stakeAmount())
-    #DSF.changeStakeAmount(2, {"from": dohrnii_account})
-    #time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    #print(DSF.stakeAmount())
+    #Fund accounts
+    DHN.transfer(ds_creator_account, 3000, {"from": dohrnii_account}) #fund the creator
+    DHN.transfer(ds_subscriber_account1, 3000, {"from": dohrnii_account}) #fund sub1
+    DHN.transfer(ds_subscriber_account2, 3000, {"from": dohrnii_account}) #fund sub2
 
 #Testing createDS() from DataSetFactory.sol
-    DHN.approve(DSF,300, {"from": ds_creator_account})
-    print(DHN.allowance(ds_creator_account, DSF))
-    time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    DS = DSF.createDS("Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
-                 "Games","Tetris statistics and data", 10, 30, 2, {"from": ds_creator_account})
-    time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    
+    DHN.approve(DSF,300, {"from": ds_creator_account}) #creator approves that the DSF contract 
+                                                       #can send tokens to the DS contract (amount = stakeAmount)
 
+    DS = DSF.createDS("Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
+                 "Games","Tetris statistics and data", 10, 20, 2, {"from": ds_creator_account}) #DS created
+  
+    
 #Accesing the creator DS contract
-    DS_address = DSF.nameToSC("Tetris",{"from": ds_subscriber_account1})
-    time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    DS = DataSet.at(DS_address)
-    time.sleep(1)#avoids known Brownie error "web3 is not connected"
+    DS_address = DSF.nameToSC("Tetris",{"from": ds_subscriber_account1}) #get the address of DS according to its name
+    DS = DataSet.at(DS_address) #instantiate the DS
+
+    time.sleep(1) #avoids known Brownie error "web3 is not connected"
+    print("Staked amount: " + str(DS.stakeAmount())) #see if the creator staking in the DS worked
 
 #Subscribing to a DS
-    DHN.transfer(ds_subscriber_account1, 3000, {"from": dohrnii_account})
-    time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    DHN.approve(DS,300, {"from": ds_subscriber_account1})
-    time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    DS.subscribeToDS(30,{"from": ds_subscriber_account1})
-    time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    print(DS.addressToSub(ds_subscriber_account1))
-    time.sleep(1)#avoids known Brownie error "web3 is not connected"
+    DHN.approve(DS,300, {"from": ds_subscriber_account1}) #sub1 approves that the DSF contract 
+                                                          #can send tokens to the DS contract (amount = stakeAmount)
+
+    DS.subscribeToDS(30,{"from": ds_subscriber_account1}) #sub1 subscribes to the "Tetris" DS
+
+    time.sleep(1) #avoids known Brownie error "web3 is not connected"
+    print("Subscriber info: ") # see info of sub1
+    print("     Price paid: "+str(DS.addressToSub(ds_subscriber_account1)[0])) # see info of sub1
+    print("     Subscription Period: "+str(DS.addressToSub(ds_subscriber_account1)[1])) # see info of sub1
+    print("     Subscribed at blocktimestamp: "+str(DS.addressToSub(ds_subscriber_account1)[2])) # see info of sub1
+    
+
+  
     

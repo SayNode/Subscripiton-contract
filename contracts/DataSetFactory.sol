@@ -13,7 +13,7 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
     //
 
         //Minimum amount to stake
-        uint256 public stakeAmount;
+        uint256 public stakeAmount=20;
 
         //Token Contract address placeholder
         IERC20 public DHN;
@@ -77,9 +77,6 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
 
                 //Creator must have the same or more DHN tokens than the required amount
                 require(DHN.balanceOf(msg.sender)>= stakeAmount, "Not enough DHN tokens");
-                
-                //Stake in this contract
-                DHN.approve(address(this), stakeAmount);//This has to be done on the backend, by calling the DHN contract
 
                 //Creates a new SC dor the new DataSet
                 DataSet dataset = new DataSet(address(this), DHNAddress, _DSname, _URL, _category, _shortDesc, msg.sender, 
