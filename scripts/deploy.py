@@ -1,4 +1,4 @@
-from brownie import accounts, config, DataSetFactory
+from brownie import accounts, config, DataSetFactory,DataSet, DHN
 import time
 import os
 
@@ -23,16 +23,17 @@ def deploy():
         #account = accounts.add(config["wallets"]["from_key"])
     
     #Deployment
+    #Call existing contract:dohrnii_token_contrat = DHN.at("0x3194cBDC3dbcd3E11a07892e7bA5c3394048Cc87")(dohrnii_account,{"from": dohrnii_account})
     dohrnii_token_contrat = DHN.deploy(dohrnii_account,{"from": dohrnii_account})
     time.sleep(1)#avoids known Brownie error "web3 is not connected"
     dataset_factory = DataSetFactory.deploy(dohrnii_token_contrat, {"from": dohrnii_account})
     time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    return dataset_factory
+    return dataset_factory, dohrnii_token_contrat
 
 def main():
 
     #Get the DataSetFactory.sol instance after deployment and the account used
-    DSF=deploy()
+    (DSF,DHN)=deploy()
 
     #Define accounts
     dohrnii_account = accounts[0]
@@ -40,12 +41,25 @@ def main():
     ds_subscriber_account1 = accounts[2]
     ds_subscriber_account2 = accounts[3]
 
-    #Testing a changeStakeAmount() from DataSetFactory.sol
-    print(DSF.stakeAmount())
-    DSF.changeStakeAmount(2, {"from": dohrnii_account})
-    time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    print(DSF.stakeAmount())
+#Testing a changeStakeAmount() from DataSetFactory.sol
+    #print(DSF.stakeAmount())
+    #DSF.changeStakeAmount(2, {"from": dohrnii_account})
+    #time.sleep(1)#avoids known Brownie error "web3 is not connected"
+    #print(DSF.stakeAmount())
 
-    #Testing createDS() from DataSetFactory.sol
-    DSF.createDS("Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
-                 "Games","Tetris statistics and data", 10, 30, 2)
+#Testing createDS() from DataSetFactory.sol
+    DHN.approve(DSF,300, {"from": ds_creator_account})
+    print(DHN.allowance(ds_creator_account, DSF))
+    time.sleep(1)#avoids known Brownie error "web3 is not connected"
+    DS = DSF.createDS("Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
+                 "Games","Tetris statistics and data", 10, 30, 2, {"from": ds_creator_account})
+    time.sleep(1)#avoids known Brownie error "web3 is not connected"
+    print(DSF.creatorExists(ds_creator_account))
+    
+#Accesing the creator DS contract
+    DS_address = DSF.nameToSC("Tetris",{"from": ds_subscriber_account1})
+    time.sleep(1)#avoids known Brownie error "web3 is not connected"
+    DS = DataSet.at(DS_address)
+    time.sleep(1)#avoids known Brownie error "web3 is not connected"
+    print(DS.DSname())
+    time.sleep(1)#avoids known Brownie error "web3 is not connected"
