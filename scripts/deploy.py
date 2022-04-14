@@ -59,13 +59,13 @@ def main():
     DS = DataSet.at(DS_address) #instantiate the DS
 
     time.sleep(1) #avoids known Brownie error "web3 is not connected"
-    print("Staked amount: " + str(DS.stakeAmount())) #see if the creator staking in the DS worked
+    print("Staked amount(correct if it is 20): " + str(DS.stakeAmount())) #see if the creator staking in the DS worked
 
 #Subscribing to a DS
     DHN.approve(DS,300, {"from": ds_subscriber_account1}) #sub1 approves that the DSF contract 
                                                           #can send tokens to the DS contract (amount = stakeAmount)
 
-    DS.subscribeToDS(30,{"from": ds_subscriber_account1}) #sub1 subscribes to the "Tetris" DS
+    DS.subscribeToDS(20,{"from": ds_subscriber_account1}) #sub1 subscribes to the "Tetris" DS
 
     time.sleep(1) #avoids known Brownie error "web3 is not connected"
     print("Subscriber info: ") # see info of sub1
