@@ -72,6 +72,8 @@ def main():
     print("     Price paid: "+str(DS.addressToSub(ds_subscriber_account1)[0])) # see info of sub1
     print("     Subscription Period: "+str(DS.addressToSub(ds_subscriber_account1)[1])) # see info of sub1
     print("     Subscribed at blocktimestamp: "+str(DS.addressToSub(ds_subscriber_account1)[2])) # see info of sub1
+
+    ##
     
 
   
