@@ -53,7 +53,7 @@ contract DataSet is ReentrancyGuard{
         string private URL;//IPFS URL
         string public category;//Data set category
         string public shortDesc;//Data set description
-        uint256 public subscriptionTime;//Possible sub periods from which the sub can choose (for now lets assume just one for simplicity)
+        uint256[] public subscriptionTimes;//Possible sub periods from which the sub can choose (for now lets assume just one for simplicity)
         uint256 public stakeAmount;//the amount a creator has to have staked in DHN to create this contract
         uint256 public stakedAmount;//the amount a creator still has staked in DHN
         uint256 public penalty;//how much staked DHN the creator looses for missing a deadline
@@ -87,7 +87,7 @@ contract DataSet is ReentrancyGuard{
             URL = _URL;
             category = _category;
             shortDesc = _shortDesc;
-            subscriptionTime= 1 seconds;//WE ARE CONSIDERING THIS THE ONLY OPTION FOR THE TIME BEING
+            subscriptionTimes= [1 seconds, 1 days, 30];//Various options, PROBABLY HERITABLE FROM THE CONSTRUCTOR LATER ON
             DSprice = _DSprice;
             DSrating = 0;
             creationTime = block.timestamp;
@@ -139,7 +139,8 @@ contract DataSet is ReentrancyGuard{
             uint withdrawable=0;
             for(uint i = 0; i<deposits.length; i++){//for every deposit, sees if the deposit was made more than a subcription time ago.
                                                     //if yes, then add it uo to the total of deposits amount the creator can withdraw
-                if(block.timestamp - deposits[i].time_of_deposit> subscriptionTime){
+                uint subtime = addressToSub[deposits[i].subscriber_address].sub_time;
+                if(block.timestamp - deposits[i].time_of_deposit> subtime){
                     withdrawable = withdrawable + deposits[i].deposit_amount;
                     deposits[i].deposit_amount=0;
                 } 
@@ -168,9 +169,11 @@ contract DataSet is ReentrancyGuard{
 
             //Owner gets his money
             uint withdrawable;
+            
             for(uint i = 0; i<deposits.length; i++){//for every deposit, sees if the deposit was made more than a subcription time ago.
                                                     //if yes, then add it uo to the total of deposits amount the creator can withdraw
-                if(block.timestamp - deposits[i].time_of_deposit> subscriptionTime){
+                uint subtime = addressToSub[deposits[i].subscriber_address].sub_time;
+                if(block.timestamp - deposits[i].time_of_deposit> subtime){
                     withdrawable = withdrawable + deposits[i].deposit_amount;
                     deposits[i].deposit_amount=0;
                 } 
@@ -193,7 +196,7 @@ contract DataSet is ReentrancyGuard{
     //
     //SUBSCRIBER FUNCTIONS
     //
-        function subscribeToDS(uint _subPeriod) public payable nonReentrant{
+        function subscribeToDS(uint256 _subTimeChoice) public payable nonReentrant{
 
             //require he is not subscribed already
             require(addressToSub[msg.sender].subbed != true, "You are already subbed to this data set.");
@@ -208,11 +211,11 @@ contract DataSet is ReentrancyGuard{
             if(addressToSub[msg.sender].sub_init_time!=0){
                 addressToSub[msg.sender].subbed=true;//declare that he is subbed again
                 addressToSub[msg.sender].sub_init_time=block.timestamp;//update the time he subbed
-                addressToSub[msg.sender].sub_time=_subPeriod;//update his subbed time
+                addressToSub[msg.sender].sub_time=subscriptionTimes[_subTimeChoice];//update his subbed time
                 addressToSub[msg.sender].price_paid = DSprice;//update the price paid
             }else{//else
                 subscribers.push(payable(msg.sender));//add new sub address to the record
-                addressToSub[msg.sender] = Subscriber(DSprice, _subPeriod, block.timestamp, true);//create the new sub info
+                addressToSub[msg.sender] = Subscriber(DSprice, subscriptionTimes[_subTimeChoice], block.timestamp, true);//create the new sub info
                                                                                                     //and map it to his address
                 subCount++;//increment all time sub count
             }

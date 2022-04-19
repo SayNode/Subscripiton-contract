@@ -68,7 +68,7 @@ def main():
     DHN.approve(DS,300, {"from": ds_subscriber_account1}) #sub1 approves that the DSF contract 
                                                           #can send tokens to the DS contract (amount = stakeAmount)
 
-    DS.subscribeToDS(1,{"from": ds_subscriber_account1}) #sub1 subscribes to the "Tetris" DS
+    DS.subscribeToDS(0, {"from": ds_subscriber_account1}) #sub1 subscribes to the "Tetris" DS
 
     time.sleep(1) #avoids known Brownie error "web3 is not connected"
     print("Subscriber info: ") # see info of sub1
@@ -81,7 +81,7 @@ def main():
     DHN.approve(DS,300, {"from": ds_subscriber_account2}) #sub1 approves that the DSF contract 
                                                           #can send tokens to the DS contract (amount = stakeAmount)
 
-    DS.subscribeToDS(1,{"from": ds_subscriber_account2}) #sub1 subscribes to the "Tetris" DS
+    DS.subscribeToDS(0, {"from": ds_subscriber_account2}) #sub1 subscribes to the "Tetris" DS
 
     time.sleep(1) #avoids known Brownie error "web3 is not connected"
     print("Subscriber info: ") # see info of sub1
@@ -89,17 +89,18 @@ def main():
     print("     Subscription Period: "+str(DS.addressToSub(ds_subscriber_account2)[1])) # see info of sub1
     print("     Subscribed at blocktimestamp: "+str(DS.addressToSub(ds_subscriber_account2)[2])) # see info of sub1
 
- #Withdraw funds
-    print("------------------Withdrw Funds------------------")
-    print("Creator Balance Before Withdraw: "+str(DHN.balanceOf(ds_creator_account)))
-    print("Sub count Before Withdraw: "+str(DS.numberOfCurrentlySubbed()) )
-    print("Contract balance Before Withdraw: "+str(DS.getContractBalance()) )
-    time.sleep(1) #avoids known Brownie error "web3 is not connected"
+ #Withdraw funds Case1: booth subs have ended their sub time and the creator can withdraw
+    print("------------------Withdraw Funds------------------")
+    print("Creator Balance Before Withdraw: "+str(DHN.balanceOf(ds_creator_account)))#sould be 10 (starts with 30 and stakes 20)
+    print("Sub count Before Withdraw: "+str(DS.numberOfCurrentlySubbed()) )#should be 2
+    print("Contract balance Before Withdraw: "+str(DS.getContractBalance()) )#should be 40 (20 staked by the creator+10 for each sub)
+
     chain.sleep(10)
     DS.withdrawFunds({"from": ds_creator_account})
+
     time.sleep(1) #avoids known Brownie error "web3 is not connected"
-    print("Creator Balance After withdraw: " + str(DHN.balanceOf(ds_creator_account)))
-    print("Contract balance After withdraw: "+str(DS.getContractBalance()) )
+    print("Creator Balance After withdraw: " + str(DHN.balanceOf(ds_creator_account)))#should be 30 (10 he had + 10 from each sub)
+    print("Contract balance After withdraw: "+str(DS.getContractBalance()))#should bonly be the staked 20
 
   
     
