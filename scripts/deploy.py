@@ -31,19 +31,19 @@ def deploy():
     return dataset_factory, dohrnii_token_contrat
 
 #Testing createDS() from DataSetFactory.sol
-def createDS(DHN, DSF, ds_creator_account):
+def createDS(DHN, DSF, ds_creator_account, DS_name, DS_IPFS_link, ds_category, ds_desc, ds_sub_price, staked_amount, penalty):
     print("------------------Creating a DS------------------")
     DHN.approve(DSF,300, {"from": ds_creator_account}) #creator approves that the DSF contract 
                                                        #can send tokens to the DS contract (amount = stakeAmount)
 
-    DSF.createDS("Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
-                 "Games","Tetris statistics and data", 10, 20, 2, {"from": ds_creator_account}) #DS created
+    DSF.createDS(DS_name, DS_IPFS_link, ds_category, ds_desc, ds_sub_price, staked_amount, penalty, 
+                {"from": ds_creator_account}) #DS created
   
     
 #Accesing the creator DS contract
-def getDSbyName(DSF, ds_subscriber_account):
+def getDSbyName(DSF, ds_subscriber_account, ds_name):
     print("------------------Get DataSet address by name------------------")
-    DS_address = DSF.nameToSC("Tetris",{"from": ds_subscriber_account}) #get the address of DS according to its name
+    DS_address = DSF.nameToSC(ds_name,{"from": ds_subscriber_account}) #get the address of DS according to its name
     DS = DataSet.at(DS_address) #instantiate the DS
 
     time.sleep(1) #avoids known Brownie error "web3 is not connected"
@@ -51,13 +51,15 @@ def getDSbyName(DSF, ds_subscriber_account):
     return DS
 
 #Subscribing to a DS
-def subToDS(DHN,DSF, ds_subscriber_account):
-    DS = getDSbyName(DSF,ds_subscriber_account)
+def subToDS(DHN,DSF, ds_subscriber_account, ds_name, sub_option):
+
+    DS = getDSbyName(DSF, ds_subscriber_account, ds_name)
+
     print("------------------Subbing------------------")
     DHN.approve(DS,300, {"from": ds_subscriber_account}) #sub1 approves that the DSF contract 
                                                           #can send tokens to the DS contract (amount = stakeAmount)
 
-    DS.subscribeToDS(0, {"from": ds_subscriber_account}) #sub1 subscribes to the "Tetris" DS
+    DS.subscribeToDS(sub_option, {"from": ds_subscriber_account}) #sub1 subscribes to the "Tetris" DS
 
     time.sleep(1) #avoids known Brownie error "web3 is not connected"
     print("Subscriber info: ") # see info of sub1
@@ -66,14 +68,15 @@ def subToDS(DHN,DSF, ds_subscriber_account):
     print("     Subscribed at blocktimestamp: "+str(DS.addressToSub(ds_subscriber_account)[2])) # see info of sub1
 
  #Withdraw funds Case1: booth subs have ended their sub time and the creator can withdraw
-def withdrawFunds(DHN,DSF, ds_creator_account):
-    DS = getDSbyName(DSF,ds_creator_account)
+def withdrawFunds(DHN,DSF, ds_creator_account, ds_name):
+
+    DS = getDSbyName(DSF, ds_creator_account, ds_name)
+
     print("------------------Withdraw Funds------------------")
     print("Creator Balance Before Withdraw: "+str(DHN.balanceOf(ds_creator_account)))#sould be 10 (starts with 30 and stakes 20)
     #print("Sub count Before Withdraw: "+str(DS.numberOfCurrentlySubbed()) )#should be 2
     print("Contract balance Before Withdraw: "+str(DS.getContractBalance()) )#should be 40 (20 staked by the creator+10 for each sub)
 
-    chain.sleep(10)
     DS.withdrawFunds({"from": ds_creator_account})
 
     time.sleep(1) #avoids known Brownie error "web3 is not connected"
@@ -100,12 +103,16 @@ def main():
     DHN.transfer(ds_subscriber_account2, 30, {"from": dohrnii_account}) #fund sub2  
 
     #Create a DS and instantiate it
-    createDS(DHN, DSF, ds_creator_account)
+    createDS(DHN, DSF, ds_creator_account,"Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
+                 "Games","Tetris statistics and data", 10, 20, 2)
 
     #Sub1
-    subToDS(DHN, DSF, ds_subscriber_account1)    
+    subToDS(DHN, DSF, ds_subscriber_account1, "Tetris", 0)    
     #Sub2
-    subToDS(DHN, DSF, ds_subscriber_account2)
+    subToDS(DHN, DSF, ds_subscriber_account2, "Tetris", 0)
+
+    #Simulating the passing of 10 seconds
+    chain.sleep(10)
 
     #Withdraw funds
-    withdrawFunds(DHN, DSF, ds_creator_account)
+    withdrawFunds(DHN, DSF, ds_creator_account, "Tetris")
