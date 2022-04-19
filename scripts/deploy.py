@@ -1,4 +1,4 @@
-from brownie import accounts, config, DataSetFactory,DataSet, DHN
+from brownie import accounts, config,chain,  DataSetFactory,DataSet, DHN
 import time
 import os
 
@@ -95,6 +95,7 @@ def main():
     print("Sub count Before Withdraw: "+str(DS.numberOfCurrentlySubbed()) )
     print("Contract balance Before Withdraw: "+str(DS.getContractBalance()) )
     time.sleep(1) #avoids known Brownie error "web3 is not connected"
+    #chain.sleep(10)
     DS.withdrawFunds({"from": ds_creator_account})
     time.sleep(1) #avoids known Brownie error "web3 is not connected"
     print("Creator Balance After withdraw: "+str(ds_creator_account.balance()) )
