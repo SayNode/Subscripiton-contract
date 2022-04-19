@@ -47,6 +47,7 @@ def main():
     DHN.transfer(ds_subscriber_account2, 3000, {"from": dohrnii_account}) #fund sub2
 
 #Testing createDS() from DataSetFactory.sol
+    print("------------------Creating a DS------------------")
     DHN.approve(DSF,300, {"from": ds_creator_account}) #creator approves that the DSF contract 
                                                        #can send tokens to the DS contract (amount = stakeAmount)
 
@@ -55,6 +56,7 @@ def main():
   
     
 #Accesing the creator DS contract
+    print("------------------Get DataSet address by name------------------")
     DS_address = DSF.nameToSC("Tetris",{"from": ds_subscriber_account1}) #get the address of DS according to its name
     DS = DataSet.at(DS_address) #instantiate the DS
 
@@ -62,6 +64,7 @@ def main():
     print("Staked amount(correct if it is 20): " + str(DS.stakeAmount())) #see if the creator staking in the DS worked
 
 #Subscribing to a DS
+    print("------------------First Sub------------------")
     DHN.approve(DS,300, {"from": ds_subscriber_account1}) #sub1 approves that the DSF contract 
                                                           #can send tokens to the DS contract (amount = stakeAmount)
 
@@ -74,6 +77,7 @@ def main():
     print("     Subscribed at blocktimestamp: "+str(DS.addressToSub(ds_subscriber_account1)[2])) # see info of sub1
 
 #Subscribing to a DS
+    print("------------------Second Sub------------------")
     DHN.approve(DS,300, {"from": ds_subscriber_account2}) #sub1 approves that the DSF contract 
                                                           #can send tokens to the DS contract (amount = stakeAmount)
 
@@ -84,9 +88,18 @@ def main():
     print("     Price paid: "+str(DS.addressToSub(ds_subscriber_account2)[0])) # see info of sub1
     print("     Subscription Period: "+str(DS.addressToSub(ds_subscriber_account2)[1])) # see info of sub1
     print("     Subscribed at blocktimestamp: "+str(DS.addressToSub(ds_subscriber_account2)[2])) # see info of sub1
-    print("Sub count: "+str(DS.subCount()) )
+
+ #Withdraw funds
+    print("------------------Withdrw Funds------------------")
+    print("Creator Balance Before Withdraw: "+str(ds_creator_account.balance()) )
+    print("Sub count Before Withdraw: "+str(DS.numberOfCurrentlySubbed()) )
+    print("Contract balance Before Withdraw: "+str(DS.getContractBalance()) )
+    time.sleep(1) #avoids known Brownie error "web3 is not connected"
+    DS.withdrawFunds({"from": ds_creator_account})
+    time.sleep(1) #avoids known Brownie error "web3 is not connected"
+    print("Creator Balance After withdraw: "+str(ds_creator_account.balance()) )
+    print("Sub count After Withdraw: "+str(DS.numberOfCurrentlySubbed()) )
     print("Contract balance: "+str(DS.getContractBalance()) )
-    
 
   
     

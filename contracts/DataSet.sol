@@ -87,7 +87,7 @@ contract DataSet is ReentrancyGuard{
             URL = _URL;
             category = _category;
             shortDesc = _shortDesc;
-            subscriptionTime= 30 days;//WE ARE CONSIDERING THIS THE ONLY OPTION FOR THE TIME BEING
+            subscriptionTime= 1 seconds;//WE ARE CONSIDERING THIS THE ONLY OPTION FOR THE TIME BEING
             DSprice = _DSprice;
             DSrating = 0;
             creationTime = block.timestamp;
@@ -145,7 +145,7 @@ contract DataSet is ReentrancyGuard{
                 } 
             }
             //transfers the total withdrawble amount
-            DHN.transferFrom(address(this),msg.sender, withdrawable);
+            DHN.transfer(msg.sender, withdrawable);
             
         }
 
@@ -221,7 +221,7 @@ contract DataSet is ReentrancyGuard{
 
         function requestURL() public onlySubs returns(string memory) {
             //if the sub time hasn't expired yet
-            if(checkIfStillSubbed()){
+            if(checkIfStillSubbed(msg.sender)){
                 return URL;//return the url link
             }
             //else 
@@ -245,10 +245,10 @@ contract DataSet is ReentrancyGuard{
             }
         }
 
-        function checkIfStillSubbed() public view returns(bool){//is the user still in its sub period?
+        function checkIfStillSubbed(address _sub) public view returns(bool){//is the user still in its sub period?
 
             //if: now -  the initial sub time < the subscription time
-            if((block.timestamp - addressToSub[msg.sender].sub_init_time)< addressToSub[msg.sender].sub_time){
+            if((block.timestamp - addressToSub[_sub].sub_init_time)< addressToSub[_sub].sub_time){
                 return true;
             }//else
             return false;
@@ -258,7 +258,7 @@ contract DataSet is ReentrancyGuard{
         function numberOfCurrentlySubbed() public view returns(uint){//how many people are currently subbed?
             uint count = 0;
             for(uint i = 0; i<subscribers.length; i++){
-                if(addressToSub[subscribers[i]].subbed == true)count++;
+                if(checkIfStillSubbed(subscribers[i]))count++;
             }
             return count;
         }
