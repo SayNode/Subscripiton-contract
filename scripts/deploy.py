@@ -73,7 +73,19 @@ def main():
     print("     Subscription Period: "+str(DS.addressToSub(ds_subscriber_account1)[1])) # see info of sub1
     print("     Subscribed at blocktimestamp: "+str(DS.addressToSub(ds_subscriber_account1)[2])) # see info of sub1
 
-    ##
+#Subscribing to a DS
+    DHN.approve(DS,300, {"from": ds_subscriber_account2}) #sub1 approves that the DSF contract 
+                                                          #can send tokens to the DS contract (amount = stakeAmount)
+
+    DS.subscribeToDS(20,{"from": ds_subscriber_account2}) #sub1 subscribes to the "Tetris" DS
+
+    time.sleep(1) #avoids known Brownie error "web3 is not connected"
+    print("Subscriber info: ") # see info of sub1
+    print("     Price paid: "+str(DS.addressToSub(ds_subscriber_account2)[0])) # see info of sub1
+    print("     Subscription Period: "+str(DS.addressToSub(ds_subscriber_account2)[1])) # see info of sub1
+    print("     Subscribed at blocktimestamp: "+str(DS.addressToSub(ds_subscriber_account2)[2])) # see info of sub1
+    print("Sub count: "+str(DS.subCount()) )
+    print("Contract balance: "+str(DS.getContractBalance()) )
     
 
   
