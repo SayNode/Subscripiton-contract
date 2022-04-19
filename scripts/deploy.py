@@ -31,14 +31,22 @@ def deploy():
     return dataset_factory, dohrnii_token_contrat
 
 #Testing createDS() from DataSetFactory.sol
-def createDS(DHN, DSF, ds_creator_account, DS_name, DS_IPFS_link, ds_category, ds_desc, ds_sub_price, staked_amount, penalty):
+def createDS(DHN, DSF, ds_creator_account, DS_name, DS_IPFS_link, ds_category, ds_desc, ds_sub_price, update_freq, penalty):
     print("------------------Creating a DS------------------")
     DHN.approve(DSF,300, {"from": ds_creator_account}) #creator approves that the DSF contract 
                                                        #can send tokens to the DS contract (amount = stakeAmount)
 
-    DSF.createDS(DS_name, DS_IPFS_link, ds_category, ds_desc, ds_sub_price, staked_amount, penalty, 
+    DSF.createDS(DS_name, DS_IPFS_link, ds_category, ds_desc, ds_sub_price, update_freq, penalty, 
                 {"from": ds_creator_account}) #DS created
-  
+
+def getDSinfo(DSF, ds_creator_account, ds_name):
+    DS = getDSbyName(DSF, ds_creator_account, ds_name)
+    print("DS info: ") # see info of sub1
+    print("     Creator address: "+str(DS.creatorAddress())+" == "+str(ds_creator_account)) # see info of sub1
+    print("     Dataset Sub Price: "+str(DS.DSprice())) # see info of sub1
+    print("     Dataset Update freq: "+str(DS.updateFrequency())) # see info of sub1
+    print("     Dataset Stake: "+str(DS.stakeAmount())) # see info of sub1
+    print("     Dataset Penalty: "+str(DS.penalty())) # see info of sub1
     
 #Accesing the creator DS contract
 def getDSbyName(DSF, ds_subscriber_account, ds_name):
@@ -104,7 +112,7 @@ def main():
 
     #Create a DS and instantiate it
     createDS(DHN, DSF, ds_creator_account,"Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
-                 "Games","Tetris statistics and data", 10, 20, 2)
+                 "Games","Tetris statistics and data", 10, 3600, 2)
 
     #Sub1
     subToDS(DHN, DSF, ds_subscriber_account1, "Tetris", 0)    
@@ -116,3 +124,6 @@ def main():
 
     #Withdraw funds
     withdrawFunds(DHN, DSF, ds_creator_account, "Tetris")
+
+    #Get a DS info
+    getDSinfo(DSF, ds_creator_account, "Tetris")
