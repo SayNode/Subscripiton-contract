@@ -6,5 +6,6 @@
 - [x] Buying/subbing to a dataset;
 - [x] Complex functions in DataSet.sol;
 - [x] Withdrawing money from a dataset (creator) for various time sub subscribers scenarios;
+- [ ] Accurate current subcriber count
 - [ ] Deleting a dataset;
 - [ ] Schedule options and staking loss if a deadline is missed;

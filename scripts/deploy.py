@@ -66,11 +66,11 @@ def subToDS(DHN,DSF, ds_subscriber_account):
     print("     Subscribed at blocktimestamp: "+str(DS.addressToSub(ds_subscriber_account)[2])) # see info of sub1
 
  #Withdraw funds Case1: booth subs have ended their sub time and the creator can withdraw
-def withdrawFunds(DHN,DSF,DS, ds_creator_account):
+def withdrawFunds(DHN,DSF, ds_creator_account):
     DS = getDSbyName(DSF,ds_creator_account)
     print("------------------Withdraw Funds------------------")
     print("Creator Balance Before Withdraw: "+str(DHN.balanceOf(ds_creator_account)))#sould be 10 (starts with 30 and stakes 20)
-    print("Sub count Before Withdraw: "+str(DS.numberOfCurrentlySubbed()) )#should be 2
+    #print("Sub count Before Withdraw: "+str(DS.numberOfCurrentlySubbed()) )#should be 2
     print("Contract balance Before Withdraw: "+str(DS.getContractBalance()) )#should be 40 (20 staked by the creator+10 for each sub)
 
     chain.sleep(10)
@@ -100,7 +100,7 @@ def main():
     DHN.transfer(ds_subscriber_account2, 30, {"from": dohrnii_account}) #fund sub2  
 
     #Create a DS and instantiate it
-    DS = createDS(DHN, DSF, ds_creator_account)
+    createDS(DHN, DSF, ds_creator_account)
 
     #Sub1
     subToDS(DHN, DSF, ds_subscriber_account1)    
@@ -108,4 +108,4 @@ def main():
     subToDS(DHN, DSF, ds_subscriber_account2)
 
     #Withdraw funds
-    withdrawFunds(DHN, DSF, DS, ds_creator_account)
+    withdrawFunds(DHN, DSF, ds_creator_account)
