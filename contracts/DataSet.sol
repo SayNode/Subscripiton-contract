@@ -136,7 +136,7 @@ contract DataSet is ReentrancyGuard{
         }
 
         function withdrawFunds() public onlyOwner{//creator uses this to withdraw available funds
-            uint withdrawable;
+            uint withdrawable=0;
             for(uint i = 0; i<deposits.length; i++){//for every deposit, sees if the deposit was made more than a subcription time ago.
                                                     //if yes, then add it uo to the total of deposits amount the creator can withdraw
                 if(block.timestamp - deposits[i].time_of_deposit> subscriptionTime){
@@ -145,7 +145,7 @@ contract DataSet is ReentrancyGuard{
                 } 
             }
             //transfers the total withdrawble amount
-            DHN.transfer(msg.sender, withdrawable);
+            DHN.transfer(creatorAddress, withdrawable);
             
         }
 
