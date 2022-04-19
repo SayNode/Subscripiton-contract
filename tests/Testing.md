@@ -4,7 +4,7 @@
 - [x] Staking;
 - [x] Basic functions in DataSet.sol;
 - [x] Buying/subbing to a dataset (addressToSub[msg.sender].subbed stays false, have to find out why);
-- [ ] Complex functions in DataSet.sol;
-- [ ] Withdrawing money from a dataset (creator);
+- [x] Complex functions in DataSet.sol;
+- [x] Withdrawing money from a dataset (creator) for various time sub subscribers scenarios;
 - [ ] Deleting a dataset;
 - [ ] Schedule options and staking loss if a deadline is missed;

@@ -38,8 +38,10 @@ def main():
     #Define accounts
     dohrnii_account = accounts[0] #mints the DHN tokens
     ds_creator_account = accounts[1] #creates a nem Data Set callled "Tetris"
-    ds_subscriber_account1 = accounts[2] #will subscribe to the "Tetris" dataset
-    ds_subscriber_account2 = accounts[3] #will also subscribe to the "Tetris" dataset
+    ds_subscriber_account1 = accounts[2] #will subscribe to the "Tetris" dataset with a 1s sub time
+    ds_subscriber_account2 = accounts[3] #will also subscribe to the "Tetris" dataset with a 1s sub time
+    ds_subscriber_account3 = accounts[4] #will subscribe to the "Tetris" dataset with a 1day sub time
+    ds_subscriber_account4 = accounts[5] #will also subscribe to the "Tetris" dataset with a 30 days sub time
 
     #Fund accounts
     DHN.transfer(ds_creator_account, 30, {"from": dohrnii_account}) #fund the creator
