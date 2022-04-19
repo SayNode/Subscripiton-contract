@@ -42,11 +42,11 @@ def createDS(DHN, DSF, ds_creator_account, DS_name, DS_IPFS_link, ds_category, d
 def getDSinfo(DSF, ds_creator_account, ds_name):
     DS = getDSbyName(DSF, ds_creator_account, ds_name)
     print("DS info: ") # see info of sub1
-    print("     Creator address: "+str(DS.creatorAddress())+" == "+str(ds_creator_account)) # see info of sub1
-    print("     Dataset Sub Price: "+str(DS.DSprice())) # see info of sub1
-    print("     Dataset Update freq: "+str(DS.updateFrequency())) # see info of sub1
-    print("     Dataset Stake: "+str(DS.stakeAmount())) # see info of sub1
-    print("     Dataset Penalty: "+str(DS.penalty())) # see info of sub1
+    print("     Creator address: "+str(DS.creatorAddress())+" == "+str(ds_creator_account)) #TEST:
+    print("     Dataset Sub Price: "+str(DS.DSprice())) #TEST:
+    print("     Dataset Update freq: "+str(DS.updateFrequency())) #TEST:
+    print("     Dataset Stake: "+str(DS.stakeAmount())) #TEST:
+    print("     Dataset Penalty: "+str(DS.penalty())) #TEST:
     
 #Accesing the creator DS contract
 def getDSbyName(DSF, ds_subscriber_account, ds_name):
@@ -55,7 +55,7 @@ def getDSbyName(DSF, ds_subscriber_account, ds_name):
     DS = DataSet.at(DS_address) #instantiate the DS
 
     time.sleep(1) #avoids known Brownie error "web3 is not connected"
-    print("Staked amount(correct if it is 20): " + str(DS.stakeAmount())) #see if the creator staking in the DS worked
+    print("Staked amount(correct if it is 20): " + str(DS.stakeAmount())) #TEST:see if the creator staking in the DS worked
     return DS
 
 #Subscribing to a DS
@@ -70,10 +70,10 @@ def subToDS(DHN,DSF, ds_subscriber_account, ds_name, sub_option):
     DS.subscribeToDS(sub_option, {"from": ds_subscriber_account}) #sub1 subscribes to the "Tetris" DS
 
     time.sleep(1) #avoids known Brownie error "web3 is not connected"
-    print("Subscriber info: ") # see info of sub1
-    print("     Price paid: "+str(DS.addressToSub(ds_subscriber_account)[0])) # see info of sub1
-    print("     Subscription Period: "+str(DS.addressToSub(ds_subscriber_account)[1])) # see info of sub1
-    print("     Subscribed at blocktimestamp: "+str(DS.addressToSub(ds_subscriber_account)[2])) # see info of sub1
+    print("Subscriber info: ") #TEST:see info of sub1
+    print("     Price paid: "+str(DS.addressToSub(ds_subscriber_account)[0])) #TEST:see info of sub1
+    print("     Subscription Period: "+str(DS.addressToSub(ds_subscriber_account)[1])) #TEST:see info of sub1
+    print("     Subscribed at blocktimestamp: "+str(DS.addressToSub(ds_subscriber_account)[2])) #TEST:see info of sub1
 
  #Withdraw funds Case1: booth subs have ended their sub time and the creator can withdraw
 def withdrawFunds(DHN,DSF, ds_creator_account, ds_name):
@@ -81,15 +81,15 @@ def withdrawFunds(DHN,DSF, ds_creator_account, ds_name):
     DS = getDSbyName(DSF, ds_creator_account, ds_name)
 
     print("------------------Withdraw Funds------------------")
-    print("Creator Balance Before Withdraw: "+str(DHN.balanceOf(ds_creator_account)))#sould be 10 (starts with 30 and stakes 20)
-    #print("Sub count Before Withdraw: "+str(DS.numberOfCurrentlySubbed()) )#should be 2
-    print("Contract balance Before Withdraw: "+str(DS.getContractBalance()) )#should be 40 (20 staked by the creator+10 for each sub)
+    print("Creator Balance Before Withdraw: "+str(DHN.balanceOf(ds_creator_account)))#TEST:sould be 10 (starts with 30 and stakes 20)
+    #print("Sub count Before Withdraw: "+str(DS.numberOfCurrentlySubbed()) )#TEST:should be 2
+    print("Contract balance Before Withdraw: "+str(DS.getContractBalance()) )#TEST:should be 40 (20 staked by the creator+10 for each sub)
 
     DS.withdrawFunds({"from": ds_creator_account})
 
     time.sleep(1) #avoids known Brownie error "web3 is not connected"
-    print("Creator Balance After withdraw: " + str(DHN.balanceOf(ds_creator_account)))#should be 30 (10 he had + 10 from each sub)
-    print("Contract balance After withdraw: "+str(DS.getContractBalance()))#should bonly be the staked 20
+    print("Creator Balance After withdraw: " + str(DHN.balanceOf(ds_creator_account)))#TEST:should be 30 (10 he had + 10 from each sub)
+    print("Contract balance After withdraw: "+str(DS.getContractBalance()))#TEST:should bonly be the staked 20
 
   
 def main():
