@@ -62,19 +62,19 @@ def testCreateDS():
 
     intial_balance_creator = DHN.balanceOf(ds_creator_account1)/dec_fit#Keep the initial creator balance
 
-    #Withdraw funds (only one subscriber sub period has ended)
+    #Withdraw funds (only one subscriber sub period has ended, so creatorBalance + 1*DSprice)
     DS_instance1.withdrawFunds({"from": ds_creator_account1})
     assert DHN.balanceOf(ds_creator_account1)/dec_fit == intial_balance_creator + 10
 
-    #Withdraw funds (all subscribers sub period has ended) 
+    #Withdraw funds (all subscribers sub period has ended, so creatorBalance + 1*DSprice + 2*DSprice) 
     chain.sleep(31*24*3600)  
     DS_instance1.withdrawFunds({"from": ds_creator_account1})
     assert DHN.balanceOf(ds_creator_account1)/dec_fit == intial_balance_creator + 3*10
 
 
-    #DS_instance1.stakeMoreDHN(2*dec_fit)
+    #DS_instance1.stakeMoreDHN(2*dec_fit) - TO DO
 
-    #deployer.deleteDS()
+    #deployer.deleteDS() - TO DO
 
 #Assertion: Subscriber Functions
 
@@ -84,5 +84,13 @@ def testCreateDS():
     assert DS_instance1.requestURL.call({"from": ds_subscriber_account1})=="You are no longer subscribed to this data set"
     #Passes when subbing with option 2 (30 days) as it should
     assert DS_instance1.requestURL.call({"from": ds_subscriber_account2})=="https://ipfs.io/ipfs/bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/wiki/"
-
+    
 #Assertion: Logistics functions
+    
+    #checkUpdateSchedule() -TO DO
+
+    #checkIfStillSubbed ==> Already proven to work because we tested requestURL()
+
+    #numberOfCurrentlySubbed - TO DO - FUNCTION DOES NOT WORK
+
+    #getContractBalance - TO DO
