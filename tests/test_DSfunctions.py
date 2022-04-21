@@ -33,7 +33,7 @@ def testCreateDS():
     #Sub2
     deployer.subToDS(dec_fit, DHN, DSF, ds_subscriber_account2, "Tetris", 1)#subbed for 1 day
 
-#Assertion: Owner Functions
+#Assertion: Owner Functions Basic
     #URL
     assert DS_instance1.URL() == "https://ipfs.io/ipfs/bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/wiki/Tetris.html"
     DS_instance1.updateURL("https://ipfs.io/ipfs/bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/wiki/",{"from": ds_creator_account1})
@@ -51,6 +51,18 @@ def testCreateDS():
     DS_instance1.changeDescription("Full wikipedia website",{"from": ds_creator_account1})
     assert DS_instance1.shortDesc() == "Full wikipedia website"
 
+#Assertion: Owner Functions Complex
+    #Withdraw funds (both subscribers sub period has ended)
+    
+    #DS_instance1.withdrawFunds({"from": ds_creator_account1})
+
+    #Withdraw funds (only one subscriber sub period has ended)
+    
+    #Withdraw funds (no subscriber sub period has ended)
+
+
+    #DS_instance1.stakeMoreDHN(2*dec_fit)
+    #deployer.deleteDS()
 
 #Assertion: Subscriber Functions
 
