@@ -2,6 +2,10 @@ from brownie import accounts, config,chain,  DataSetFactory,DataSet, DHN
 import scripts.deploy as deployer
 
 #Test the subscription to two DataSets
+#See the changes in:
+                    # variables (subCount, contract balance, subBalance), 
+                    # mappings(addressToSub), 
+                    # arrays of structs (deposits, subscribres)
 
 def testCreateDS():
     #Get the DataSetFactory.sol instance after deployment and the account used
@@ -84,4 +88,8 @@ def testCreateDS():
     info6 = DS_instance2.addressToSub(ds_subscriber_account1)
     #Price paid, subscription time, Is this person currently subbed?
     assert (0, 0, False) == (info6[0], info6[1], info6[3])
+
+#Assertion: Deposits
+
+#Assertion: Mappings
 
