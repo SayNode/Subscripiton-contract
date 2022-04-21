@@ -1,3 +1,4 @@
+from email.headerregistry import Address
 from brownie import accounts, config,chain,  DataSetFactory,DataSet, DHN
 import scripts.deploy as deployer
 
@@ -59,7 +60,7 @@ def testCreateDS():
     assert ((20+2*5)*dec_fit, 2) == (DHN.balanceOf(DS_instance2),#contract balance changes because of 2 subs
                         DS_instance2.subCount())#subcount increases by 2
     
-#Assertion: Sub info
+#Assertion: Mapping and Subscriber struct
 
     #Subscribed to "Tetris"
     info1 = DS_instance1.addressToSub(ds_subscriber_account1)
@@ -91,12 +92,28 @@ def testCreateDS():
     #Price paid, subscription time, Is this person currently subbed?
     assert (0, 0, False) == (info6[0], info6[1], info6[3])
 
-#Assertion: Deposits
+#Assertion: "deposits" struct array
 
-    #Subscribed to "Tetris"
-    info1 = DS_instance1.deposits(0)
+    #1st Subscriber deposit to "Tetris"
+    info7 = DS_instance1.deposits(0)
     #Price paid, subscription time, Is this person currently subbed?
-    assert (ds_subscriber_account1, 10*dec_fit) == (info1[0], info1[1])
+    assert (ds_subscriber_account1, 10*dec_fit) == (info7[0], info7[1])
 
-#Assertion: Mappings
+    #2nd Subscriber deposit to "Desserts"
+    info8 = DS_instance2.deposits(1)
+    #Price paid, subscription time, Is this person currently subbed?
+    assert (ds_subscriber_account4, 5*dec_fit) == (info8[0], info8[1])
+
+#Assertion: "subscribers" address array
+
+    #1st Subscriber deposit to "Tetris"
+    info9 = DS_instance1.subscribers(0)
+    #Price paid, subscription time, Is this person currently subbed?
+    assert (ds_subscriber_account1) == (info9)
+
+    #2nd Subscriber deposit to "Desserts"
+    info10 = DS_instance2.subscribers(1)
+    #Price paid, subscription time, Is this person currently subbed?
+    assert (ds_subscriber_account4) == (info10)
+
 
