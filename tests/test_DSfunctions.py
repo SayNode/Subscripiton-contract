@@ -58,20 +58,27 @@ def testCreateDS():
 
 #Assertion: Owner Functions Complex
 
+    chain.snapshot()#Saves the chain state at this point
+
+    intial_balance_creator = DHN.balanceOf(ds_creator_account1)/dec_fit#Keep the initial creator balance
+
     #Withdraw funds (only one subscriber sub period has ended)
     DS_instance1.withdrawFunds({"from": ds_creator_account1})
+    assert DHN.balanceOf(ds_creator_account1)/dec_fit == intial_balance_creator + 10
+
     #Withdraw funds (all subscribers sub period has ended) 
     chain.sleep(31*24*3600)  
     DS_instance1.withdrawFunds({"from": ds_creator_account1})
-
-    
-    
+    assert DHN.balanceOf(ds_creator_account1)/dec_fit == intial_balance_creator + 3*10
 
 
     #DS_instance1.stakeMoreDHN(2*dec_fit)
+
     #deployer.deleteDS()
 
 #Assertion: Subscriber Functions
+
+    chain.revert()#Makes the chain equal to how it was during a snapshot
 
     #Fails when subbing with option 0 (1 second sub) as it should,
     assert DS_instance1.requestURL.call({"from": ds_subscriber_account1})=="You are no longer subscribed to this data set"
