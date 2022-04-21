@@ -15,12 +15,14 @@ def testCreateDS():
     random_account1 = accounts[3]#just to call a DS by its name
     ds_subscriber_account1 = accounts[4]
     ds_subscriber_account2 = accounts[5]
+    ds_subscriber_account3 = accounts[6]
 
     #Fund accounts
     DHN.transfer(ds_creator_account1, 30*dec_fit, {"from": dohrnii_account}) #fund the creator
     DHN.transfer(ds_creator_account2, 30*dec_fit, {"from": dohrnii_account}) #fund the creator  
     DHN.transfer(ds_subscriber_account1, 30*dec_fit, {"from": dohrnii_account}) #fund sub1
     DHN.transfer(ds_subscriber_account2, 30*dec_fit, {"from": dohrnii_account}) #fund sub2
+    DHN.transfer(ds_subscriber_account3, 30*dec_fit, {"from": dohrnii_account}) #fund sub3
 
     #Create a DS and instantiate it
     deployer.createDS(dec_fit, DHN, DSF, ds_creator_account1,"Tetris", "https://ipfs.io/ipfs/bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/wiki/Tetris.html",
@@ -32,6 +34,9 @@ def testCreateDS():
     deployer.subToDS(dec_fit, DHN, DSF, ds_subscriber_account1, "Tetris", 0)#subbed for 1 second
     #Sub2
     deployer.subToDS(dec_fit, DHN, DSF, ds_subscriber_account2, "Tetris", 1)#subbed for 1 day
+    #Sub3
+    deployer.subToDS(dec_fit, DHN, DSF, ds_subscriber_account3, "Tetris", 2)#subbed for 30 days
+
 
 #Assertion: Owner Functions Basic
     #URL
@@ -52,13 +57,15 @@ def testCreateDS():
     assert DS_instance1.shortDesc() == "Full wikipedia website"
 
 #Assertion: Owner Functions Complex
-    #Withdraw funds (both subscribers sub period has ended)
-    
-    #DS_instance1.withdrawFunds({"from": ds_creator_account1})
 
     #Withdraw funds (only one subscriber sub period has ended)
+    DS_instance1.withdrawFunds({"from": ds_creator_account1})
+    #Withdraw funds (all subscribers sub period has ended) 
+    chain.sleep(31*24*3600)  
+    DS_instance1.withdrawFunds({"from": ds_creator_account1})
+
     
-    #Withdraw funds (no subscriber sub period has ended)
+    
 
 
     #DS_instance1.stakeMoreDHN(2*dec_fit)
