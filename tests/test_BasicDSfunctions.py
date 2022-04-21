@@ -14,11 +14,13 @@ def testCreateDS():
     ds_creator_account2 = accounts[2] #creates a nem Data Set callled "Tetris"
     random_account1 = accounts[3]#just to call a DS by its name
     ds_subscriber_account1 = accounts[4]
+    ds_subscriber_account2 = accounts[5]
 
     #Fund accounts
     DHN.transfer(ds_creator_account1, 30*dec_fit, {"from": dohrnii_account}) #fund the creator
     DHN.transfer(ds_creator_account2, 30*dec_fit, {"from": dohrnii_account}) #fund the creator  
     DHN.transfer(ds_subscriber_account1, 30*dec_fit, {"from": dohrnii_account}) #fund sub1
+    DHN.transfer(ds_subscriber_account2, 30*dec_fit, {"from": dohrnii_account}) #fund sub2
 
     #Create a DS and instantiate it
     deployer.createDS(dec_fit, DHN, DSF, ds_creator_account1,"Tetris", "https://ipfs.io/ipfs/bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/wiki/Tetris.html",
@@ -27,7 +29,9 @@ def testCreateDS():
     DS_instance1 = deployer.getDSbyName(dec_fit, DSF, random_account1, "Tetris")
 
     #Sub1
-    deployer.subToDS(dec_fit, DHN, DSF, ds_subscriber_account1, "Tetris", 2)
+    deployer.subToDS(dec_fit, DHN, DSF, ds_subscriber_account1, "Tetris", 0)#subbed for 1 second
+    #Sub2
+    deployer.subToDS(dec_fit, DHN, DSF, ds_subscriber_account2, "Tetris", 1)#subbed for 1 day
 
 #Assertion: Owner Functions
     #URL
@@ -49,6 +53,10 @@ def testCreateDS():
 
 
 #Assertion: Subscriber Functions
-    assert DS_instance1.requestURL.call({"from": ds_subscriber_account1})=="https://ipfs.io/ipfs/bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/wiki/"
+
+    #Fails when subbing with option 0 (1 second sub) as it should,
+    assert DS_instance1.requestURL.call({"from": ds_subscriber_account1})=="You are no longer subscribed to this data set"
+    #Passes when subbing with option 2 (30 days) as it should
+    assert DS_instance1.requestURL.call({"from": ds_subscriber_account2})=="https://ipfs.io/ipfs/bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/wiki/"
 
 #Assertion: Logistics functions
