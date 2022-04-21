@@ -78,6 +78,8 @@ contract DataSetFactory is ReentrancyGuard, Ownable{
                 //Creator must have the same or more DHN tokens than the required amount
                 require(DHN.balanceOf(msg.sender)>= stakeAmount, "Not enough DHN tokens");
 
+                //REQUIRE THE URL TO NOT EXIST YET --TO DO
+
                 //Creates a new SC dor the new DataSet
                 DataSet dataset = new DataSet(address(this), DHNAddress, _DSname, _URL, _category, _shortDesc, msg.sender, 
                                             _DSprice, _updateFrequency, stakeAmount, penalty);

@@ -50,7 +50,7 @@ contract DataSet is ReentrancyGuard{
     //DATASET VARIABLES - THESE COME FROM THE FRONT-END/CLIENT INTERACTION
     //
         string public DSname;//Data set name
-        string private URL;//IPFS URL
+        string public URL;//IPFS URL
         string public category;//Data set category
         string public shortDesc;//Data set description
         uint256[] public subscriptionTimes;//Possible sub periods from which the sub can choose (for now lets assume just one for simplicity)
@@ -87,7 +87,7 @@ contract DataSet is ReentrancyGuard{
             URL = _URL;
             category = _category;
             shortDesc = _shortDesc;
-            subscriptionTimes= [1 seconds, 1 days, 30];//Various options, PROBABLY HERITABLE FROM THE CONSTRUCTOR LATER ON
+            subscriptionTimes= [1 seconds, 1 days, 30 days];//Various options, PROBABLY HERITABLE FROM THE CONSTRUCTOR LATER ON
             DSprice = _DSprice;
             DSrating = 0;
             creationTime = block.timestamp;
@@ -95,7 +95,7 @@ contract DataSet is ReentrancyGuard{
             updateFrequency = _updateFrequency;
             creatorAddress = _creatorAddress;
             stakeAmount = _stakeAmount;
-            stakeAmount = _stakeAmount;
+            stakedAmount = _stakeAmount;
             penalty = _penalty;
         }
 
