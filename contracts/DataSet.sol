@@ -97,6 +97,7 @@ contract DataSet is ReentrancyGuard{
             stakeAmount = _stakeAmount;
             stakedAmount = _stakeAmount;
             penalty = _penalty;
+            lastUpdated= block.timestamp;
         }
 
     //
@@ -116,7 +117,15 @@ contract DataSet is ReentrancyGuard{
     //CREATOR FUNCTIONS
     //
         function updateURL(string memory _URL) public onlyOwner {
+
+            //Require the new URL to be different from the previous one
+            require(_URL != URL, "Can't upload the same URL");
+
+            //Updates the URL link
             URL = _URL;
+
+            //Updates the time when the URL was last updated
+            lastUpdated = block.timestamp;
         }
 
         function changePrice(uint _newPrice) public onlyOwner {
@@ -237,6 +246,10 @@ contract DataSet is ReentrancyGuard{
     //
     //LOGISTIC FUNCTIONS
     //
+        //TO DO - THIS CAN BE DONE IN THE BACKEND EVERYTIME A USER REQUESTS A URL, TO SAVE GAS
+        //IF IT IS NOT UPDATED, WE CALL THE FUNCTION PENALIZE, WHICH REMOVES A PENALTY AMOUNT FROM STAKING
+        //THIS PENALY SHOULD BE BIGGER THAN THE COST THAT THE DOHRNII ACCOUNT INCURS IN CALLING
+        //THE PENALIZE FUNCTION
         function checkUpdateSchedule() public {
             //TO DO
 

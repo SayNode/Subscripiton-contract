@@ -88,9 +88,14 @@ def testCreateDS():
 #Assertion: Logistics functions
     
     #checkUpdateSchedule() -TO DO
+        #TO DO - THIS CAN BE DONE IN THE BACKEND EVERYTIME A USER REQUESTS A URL, TO SAVE GAS
+        #IF IT IS NOT UPDATED, WE CALL THE FUNCTION PENALIZE, WHICH REMOVES A PENALTY AMOUNT FROM STAKING
+        #THIS PENALY SHOULD BE BIGGER THAN THE COST THAT THE DOHRNII ACCOUNT INCURS IN CALLING
+        #THE PENALIZE FUNCTION
 
     #checkIfStillSubbed ==> Already proven to work because we tested requestURL()
 
     #numberOfCurrentlySubbed - TO DO - FUNCTION DOES NOT WORK
 
-    #getContractBalance - TO DO
+    #getContractBalance
+    assert DS_instance1.getContractBalance.call({"from": ds_subscriber_account1})/dec_fit == 50 #20 staked by creator + 10*3 sub
