@@ -159,6 +159,7 @@ contract DataSet is ReentrancyGuard{
             
         }
 
+        //DO WE WANT THIS???
         function stakeMoreDHN(uint _amount) public payable{//need to see if we want this or not
             //require that currentBalance+_amount<stakeAmount aka his balance of DHN can't be bigger than the pre-established amount  
             require(stakedAmount+_amount<=stakeAmount, "Can't re-stake that much");
@@ -171,7 +172,7 @@ contract DataSet is ReentrancyGuard{
         function deleteDS() public onlyOwner {
             
             //it should also activate if the staked DHN goes to zero, which means the creator has not updated in a long time
-                //TO DO
+                //TO DO - CAN BE DONW IN THE BACKEND AFTER CALLING THE PENALTY FUNCTION
 
             //Has to go into DataSetFactory.sol to delete the mapping of this SC before destroying this SC
             DSF.deleteChild(address(this));

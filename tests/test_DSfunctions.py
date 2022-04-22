@@ -72,7 +72,7 @@ def testCreateDS():
     assert DHN.balanceOf(ds_creator_account1)/dec_fit == intial_balance_creator + 3*10
 
 
-    #DS_instance1.stakeMoreDHN(2*dec_fit) - TO DO
+    #DS_instance1.stakeMoreDHN(2*dec_fit) - TO DO, DO WE WANT THIS?
 
     #deployer.deleteDS() - TO DO
 
