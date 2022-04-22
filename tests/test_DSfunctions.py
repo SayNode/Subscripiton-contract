@@ -74,7 +74,7 @@ def testCreateDS():
 
     #DS_instance1.stakeMoreDHN(2*dec_fit) - TO DO, DO WE WANT THIS?
 
-    #deployer.deleteDS() - TO DO
+    #deployer.deleteDS() - TO DO - WILL PROBABLY INVOLVE SOME BACKEND
 
 #Assertion: Subscriber Functions
 
