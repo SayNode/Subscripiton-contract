@@ -1,4 +1,5 @@
-from brownie import accounts, config,chain,  DataSetFactory,DataSet, DHN
+from brownie import accounts, config, chain, DataSetFactory, DataSet, DHN, TransparentUpgradeableProxy, ProxyAdmin
+from scripts.helpful_scripts import get_account, encode_function_data
 import time
 import os
 
