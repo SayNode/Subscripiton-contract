@@ -1,4 +1,4 @@
-from brownie import accounts, config, chain, DataSetFactory, DataSet, DHN, TransparentUpgradeableProxy, ProxyAdmin
+from brownie import accounts, config, chain, Contract, DataSetFactory, DataSet, DHN, TransparentUpgradeableProxy, ProxyAdmin
 from scripts.helpful_scripts import get_account, encode_function_data
 import time
 import os
@@ -6,6 +6,7 @@ import os
 def deploy():
     #A)For local ganache
     dohrnii_account = accounts[0] 
+    random = accounts[9]
 
     #B)To import a wallet you need to do on the terminal:
         #1)brownie accounts new <name of the account>
@@ -26,9 +27,22 @@ def deploy():
     #Deployment
     #Call existing contract:dohrnii_token_contrat = DHN.at("0x3194cBDC3dbcd3E11a07892e7bA5c3394048Cc87")(dohrnii_account,{"from": dohrnii_account})
     dohrnii_token_contrat = DHN.deploy(dohrnii_account,{"from": dohrnii_account})
-    time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    dataset_factory = DataSetFactory.deploy(dohrnii_token_contrat, {"from": dohrnii_account})
-    time.sleep(1)#avoids known Brownie error "web3 is not connected"
+
+    dataset_factory = DataSetFactory.deploy({"from": dohrnii_account})
+    box_encoded_initializer_function = encode_function_data(dataset_factory.initialize, dohrnii_token_contrat)
+    # box_encoded_initializer_function = encode_function_data(initializer=box.store, 1)
+    proxy = TransparentUpgradeableProxy.deploy(
+        dataset_factory.address,
+        dohrnii_account.address,
+        #proxy_admin.address,
+        box_encoded_initializer_function,
+        {"from": dohrnii_account, "gas_limit": 1000000},
+    )
+    dataset_factory = Contract.from_abi("DataSetFactory", proxy.address, DataSetFactory.abi)
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "+str(dohrnii_token_contrat))
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "+str( dataset_factory.DHNAddress({"from":random})))
+
+
     return dataset_factory, dohrnii_token_contrat
 
 #Testing createDS() from DataSetFactory.sol
@@ -100,34 +114,18 @@ def main():
 
     #Define accounts
     dohrnii_account = accounts[0] #mints the DHN tokens
-    ds_creator_account = accounts[1] #creates a nem Data Set callled "Tetris"
-    ds_subscriber_account1 = accounts[2] #will subscribe to the "Tetris" dataset with a 1s sub time
-    ds_subscriber_account2 = accounts[3] #will also subscribe to the "Tetris" dataset with a 1s sub time
-    ds_subscriber_account3 = accounts[4] #will subscribe to the "Tetris" dataset with a 1day sub time
-    ds_subscriber_account4 = accounts[5] #will also subscribe to the "Tetris" dataset with a 30 days sub time
+    ds_creator_account1 = accounts[1] #creates a nem Data Set callled "Tetris"
+    ds_creator_account2 = accounts[2] #creates a nem Data Set callled "Tetris"
+    random_account1 = accounts[3]#just to call a DS by its name
 
     #Fund accounts
-    DHN.transfer(ds_creator_account, 30*dec_fit, {"from": dohrnii_account}) #fund the creator
-    DHN.transfer(ds_subscriber_account1, 30*dec_fit, {"from": dohrnii_account}) #fund sub1
-    DHN.transfer(ds_subscriber_account2, 30*dec_fit, {"from": dohrnii_account}) #fund sub2  
+    DHN.transfer(ds_creator_account1, 30*dec_fit, {"from": dohrnii_account}) #fund the creator
+    DHN.transfer(ds_creator_account2, 30*dec_fit, {"from": dohrnii_account}) #fund the creator  
 
     #Create a DS and instantiate it
-    createDS(dec_fit, DHN, DSF, ds_creator_account,"Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
+    createDS(dec_fit,DHN, DSF, ds_creator_account1,"Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
                  "Games","Tetris statistics and data", 10*dec_fit, 3600, 2*dec_fit)
 
-    #Sub1
-    subToDS(dec_fit, DHN, DSF, ds_subscriber_account1, "Tetris", 0)    
-    #Sub2
-    subToDS(dec_fit, DHN, DSF, ds_subscriber_account2, "Tetris", 0)
-
-    #Simulating the passing of 10 seconds
-    chain.sleep(10)
-
-    #Withdraw funds
-    withdrawFunds(dec_fit, DHN, DSF, ds_creator_account, "Tetris")
-
-    #Get a DS info
-    getDSinfo(dec_fit, DSF, ds_creator_account, "Tetris")
-
-    time.sleep(1) #avoids known Brownie error "web3 is not connected"
-    print(DHN.balanceOf(dohrnii_account))
+    #DS_instance1 = getDSbyName(dec_fit, DSF, random_account1, "Tetris")
+    print("yooooooooooooo:"+ str(DHN.balanceOf(DSF)))
+    print("yooooooooooooo:"+ str(DHN.balanceOf(ds_creator_account1)))
