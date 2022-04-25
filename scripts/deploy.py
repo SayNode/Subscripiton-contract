@@ -1,5 +1,5 @@
 from brownie import accounts, config, chain, Contract, DataSetFactory, DataSetFactoryV2, DataSet, DHN, TransparentUpgradeableProxy, ProxyAdmin
-from scripts.helpful_scripts import get_account, encode_function_data
+from scripts.helpful_scripts import encode_function_data, upgrade
 import time
 import os
 
@@ -107,13 +107,13 @@ def withdrawFunds(dec_fit, DHN,DSF, ds_creator_account, ds_name):
     print("Creator Balance After withdraw: " + str(DHN.balanceOf(ds_creator_account)/dec_fit))#TEST:should be 30 (10 he had + 10 from each sub)
     print("Contract balance After withdraw: "+str(DS.getContractBalance()/dec_fit))#TEST:should bonly be the staked 20
 
-def upgradeDSF(dec_fit, DHN,DSF, dohrnii_account, ds_name):
-        dataset_factoryV2 = DataSetFactoryV2.deploy({"from": dohrnii_account})
-        proxy = TransparentUpgradeableProxy[-1]
-        proxy_admin = ProxyAdmin[-1]
-        upgrade(account, proxy, box_v2, proxy_admin_contract=proxy_admin)
-        print("Proxy has been upgraded!")
-        proxy_box = Contract.from_abi("BoxV2", proxy.address, BoxV2.abi)
+def upgradeDSF(dec_fit, DHN,dohrnii_account):
+    dataset_factoryV2 = DataSetFactoryV2.deploy({"from": dohrnii_account})
+    proxy = TransparentUpgradeableProxy[-1]
+    upgrade(dohrnii_account, proxy, dataset_factoryV2,None ,dataset_factoryV2.initialize, DHN,20*dec_fit)
+    print("Proxy has been upgraded!")
+    proxy_box = Contract.from_abi("DataSetFactoryV2", proxy.address, DataSetFactoryV2.abi)
+    return proxy_box
   
 def main():
     dec_fit = 10**18
