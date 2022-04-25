@@ -29,18 +29,20 @@ def deploy():
     dohrnii_token_contrat = DHN.deploy(dohrnii_account,{"from": dohrnii_account})
 
     dataset_factory = DataSetFactory.deploy({"from": dohrnii_account})
-    box_encoded_initializer_function = encode_function_data(dataset_factory.initialize, dohrnii_token_contrat)
-    # box_encoded_initializer_function = encode_function_data(initializer=box.store, 1)
+
+    #Proxy initializer
+    DSF_encoded_initializer_function = encode_function_data(dataset_factory.initialize, dohrnii_token_contrat,20*10**18)
+
+    #Proxy deployment
     proxy = TransparentUpgradeableProxy.deploy(
         dataset_factory.address,
         dohrnii_account.address,
         #proxy_admin.address,
-        box_encoded_initializer_function,
+        DSF_encoded_initializer_function,
         {"from": dohrnii_account, "gas_limit": 1000000},
     )
+    #Establish initial link of proxy to DataSetFactory.sol
     dataset_factory = Contract.from_abi("DataSetFactory", proxy.address, DataSetFactory.abi)
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "+str(dohrnii_token_contrat))
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "+str( dataset_factory.DHNAddress({"from":random})))
 
 
     return dataset_factory, dohrnii_token_contrat
@@ -126,6 +128,5 @@ def main():
     createDS(dec_fit,DHN, DSF, ds_creator_account1,"Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
                  "Games","Tetris statistics and data", 10*dec_fit, 3600, 2*dec_fit)
 
-    #DS_instance1 = getDSbyName(dec_fit, DSF, random_account1, "Tetris")
-    print("yooooooooooooo:"+ str(DHN.balanceOf(DSF)))
-    print("yooooooooooooo:"+ str(DHN.balanceOf(ds_creator_account1)))
+    DS_instance1 = getDSbyName(dec_fit, DSF, random_account1, "Tetris")
+    

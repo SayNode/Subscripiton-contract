@@ -47,9 +47,10 @@ contract DataSetFactory is ReentrancyGuard, Ownable, Initializable{
     //
     
         //Establish the DHN token contract for later use
-        function initialize(address _DHNAddress) public initializer {
+        function initialize(address _DHNAddress, uint _stakeAmount) public initializer {
             DHNAddress = _DHNAddress;
             DHN = IERC20(_DHNAddress);
+            stakeAmount = _stakeAmount;
         }
         
     //
