@@ -115,30 +115,4 @@ def upgradeDSF(dec_fit, DHN,dohrnii_account):
     proxy_box = Contract.from_abi("DataSetFactoryV2", proxy.address, DataSetFactoryV2.abi)
     return proxy_box
   
-def main():
-    dec_fit = 10**18
-    #Get the DataSetFactory.sol instance after deployment and the account used
-    (DSF,DHN)=deploy()
-
-    #Define accounts
-    dohrnii_account = accounts[0] #mints the DHN tokens
-    ds_creator_account1 = accounts[1] #creates a nem Data Set callled "Tetris"
-    ds_creator_account2 = accounts[2] #creates a nem Data Set callled "Tetris"
-    random_account1 = accounts[3]#just to call a DS by its name
-
-    #Fund accounts
-    DHN.transfer(ds_creator_account1, 60*dec_fit, {"from": dohrnii_account}) #fund the creator
-    DHN.transfer(ds_creator_account2, 60*dec_fit, {"from": dohrnii_account}) #fund the creator  
-
-    #Create a DS and instantiate it
-    createDS(dec_fit,DHN, DSF, ds_creator_account1,"Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
-                 "Games","Tetris statistics and data", 10*dec_fit, 3600, 2*dec_fit)
-
-    DS_instance1 = getDSbyName(dec_fit, DSF, random_account1, "Tetris")
-
-    DSF2= upgradeDSF(dec_fit, DHN,dohrnii_account)
-        #Create a DS and instantiate it
-    createDS(dec_fit,DHN, DSF2, ds_creator_account1,"Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
-                 "Games","Tetris statistics and data", 10*dec_fit, 3600, 2*dec_fit)
-    DS_instance2 = getDSbyName(dec_fit, DSF2, random_account1, "Tetris")
     

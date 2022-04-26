@@ -110,5 +110,10 @@ contract DataSetFactoryV2 is ReentrancyGuard, Ownable, Initializable{
                                                                         //he selfdestructed the corresponding DataSet.sol
             contractExists[_DS_address]==false;
         }
+
+        //This function only exists in this contract and not in DataSetFactory.sol
+        function upgradeFunction() public pure returns(string memory){
+            return "The contract was upgraded";
+        }
     
 }
