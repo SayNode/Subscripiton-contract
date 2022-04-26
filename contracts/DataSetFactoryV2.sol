@@ -5,8 +5,9 @@ import "./DataSet.sol";//SC to be replicated
 import "OpenZeppelin/openzeppelin-contracts@4.4.2/contracts/access/Ownable.sol";//Garantee only the DS creator can change its parameters
 import "OpenZeppelin/openzeppelin-contracts@4.4.2/contracts/token/ERC20/IERC20.sol";//To interact with ERC20
 import "OpenZeppelin/openzeppelin-contracts@4.4.2/contracts/security/ReentrancyGuard.sol";//Avoid double buying creation
+import "OpenZeppelin/openzeppelin-contracts@4.4.2/contracts/proxy/utils/Initializable.sol";//https://docs.openzeppelin.com/upgrades-plugins/1.x/proxies
 
-contract DataSetFactoryV2 is ReentrancyGuard, Ownable{
+contract DataSetFactoryV2 is ReentrancyGuard, Ownable, Initializable{
 
     //
     //VARIABLES
@@ -39,14 +40,11 @@ contract DataSetFactoryV2 is ReentrancyGuard, Ownable{
         //Complements the previous two mappings
         mapping(address => bool) public contractExists;
 
+     //
+    //CONSTRUCTOR->As this contract is acessed by proxy, the constructor must be replaced by a function that is only called once
+    //             This this function must be called whenever the proxy links to this logic contract
     //
-    //CONSTRUCTOR
-    //
-        //Establish the DHN token contract for later use
-        constructor(address _DHNAddress){
-            DHNAddress = _DHNAddress;
-            DHN = IERC20(_DHNAddress);
-        }
+ 
         
     //
     //MODIFIERS

@@ -110,7 +110,7 @@ def withdrawFunds(dec_fit, DHN,DSF, ds_creator_account, ds_name):
 def upgradeDSF(dec_fit, DHN,dohrnii_account):
     dataset_factoryV2 = DataSetFactoryV2.deploy({"from": dohrnii_account})
     proxy = TransparentUpgradeableProxy[-1]
-    upgrade(dohrnii_account, proxy, dataset_factoryV2,None ,dataset_factoryV2.initialize, DHN,20*dec_fit)
+    upgrade(dohrnii_account, proxy, dataset_factoryV2,None, None)
     print("Proxy has been upgraded!")
     proxy_box = Contract.from_abi("DataSetFactoryV2", proxy.address, DataSetFactoryV2.abi)
     return proxy_box
@@ -127,12 +127,18 @@ def main():
     random_account1 = accounts[3]#just to call a DS by its name
 
     #Fund accounts
-    DHN.transfer(ds_creator_account1, 30*dec_fit, {"from": dohrnii_account}) #fund the creator
-    DHN.transfer(ds_creator_account2, 30*dec_fit, {"from": dohrnii_account}) #fund the creator  
+    DHN.transfer(ds_creator_account1, 60*dec_fit, {"from": dohrnii_account}) #fund the creator
+    DHN.transfer(ds_creator_account2, 60*dec_fit, {"from": dohrnii_account}) #fund the creator  
 
     #Create a DS and instantiate it
     createDS(dec_fit,DHN, DSF, ds_creator_account1,"Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
                  "Games","Tetris statistics and data", 10*dec_fit, 3600, 2*dec_fit)
 
     DS_instance1 = getDSbyName(dec_fit, DSF, random_account1, "Tetris")
+
+    DSF2= upgradeDSF(dec_fit, DHN,dohrnii_account)
+        #Create a DS and instantiate it
+    createDS(dec_fit,DHN, DSF2, ds_creator_account1,"Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
+                 "Games","Tetris statistics and data", 10*dec_fit, 3600, 2*dec_fit)
+    DS_instance2 = getDSbyName(dec_fit, DSF2, random_account1, "Tetris")
     
