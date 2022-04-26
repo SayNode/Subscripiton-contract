@@ -107,7 +107,7 @@ def withdrawFunds(dec_fit, DHN,DSF, ds_creator_account, ds_name):
     print("Creator Balance After withdraw: " + str(DHN.balanceOf(ds_creator_account)/dec_fit))#TEST:should be 30 (10 he had + 10 from each sub)
     print("Contract balance After withdraw: "+str(DS.getContractBalance()/dec_fit))#TEST:should bonly be the staked 20
 
-def upgradeDSF(dec_fit, DHN,dohrnii_account):
+def upgradeDSF(dohrnii_account):
     dataset_factoryV2 = DataSetFactoryV2.deploy({"from": dohrnii_account})
     proxy = TransparentUpgradeableProxy[-1]
     upgrade(dohrnii_account, proxy, dataset_factoryV2,None, None)

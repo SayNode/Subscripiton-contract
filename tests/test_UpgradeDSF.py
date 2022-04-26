@@ -25,7 +25,7 @@ def testCreateDS():
     DS_instance1 = deployer.getDSbyName(dec_fit, DSF, random_account1, "Tetris")
 
     #Upgrade DataSetFactory. sol to DataSetFactoryV2.sol
-    DSF2= deployer.upgradeDSF(dec_fit, DHN,dohrnii_account)
+    DSF2= deployer.upgradeDSF(dohrnii_account)
     
     #Create a DS in the DataSetFactoryV2.sol and instantiate it
     deployer.createDS(dec_fit, DHN, DSF2, ds_creator_account2,"Desserts", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
