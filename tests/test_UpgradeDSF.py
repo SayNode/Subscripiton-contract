@@ -4,14 +4,16 @@ import scripts.deploy as deployer
 #Test the creation of a new DataSet
 
 def testCreateDS():
+    
     dec_fit = 10**18
+
     #Get the DataSetFactory.sol instance after deployment and the account used
     (DSF,DHN)=deployer.deploy()
 
     #Define accounts
     dohrnii_account = accounts[0] #mints the DHN tokens
     ds_creator_account1 = accounts[1] #creates a nem Data Set callled "Tetris"
-    ds_creator_account2 = accounts[2] #creates a nem Data Set callled "Tetris"
+    ds_creator_account2 = accounts[2] #creates a nem Data Set callled "Desserts"
     random_account1 = accounts[3]#just to call a DS by its name
 
     #Fund accounts
