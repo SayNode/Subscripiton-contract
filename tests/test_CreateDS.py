@@ -1,5 +1,10 @@
-from brownie import accounts, config,chain,  DataSetFactory,DataSet, DHN
+#from pathlib import Path
+from brownie import project, accounts, config,chain,  DataSetFactory,DataSet, DHN
 import scripts.deploy as deployer
+
+#Vault = project.load(
+ #   Path.home() / ".brownie" / "packages" / config["dependencies"][0]
+#).Vault
 
 #Test the creation of a new DataSet
 
