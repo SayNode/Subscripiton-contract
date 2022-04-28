@@ -1,4 +1,5 @@
-from brownie import accounts, config,chain,  DataSetFactory,DataSet, DHN
+from brownie import accounts, config, chain, Contract, DataSetFactory, DataSetFactoryV2, DataSet, DHN, TransparentUpgradeableProxy, ProxyAdmin
+from scripts.helpful_scripts import encode_function_data, upgrade
 import time
 import os
 
@@ -25,9 +26,24 @@ def deploy():
     #Deployment
     #Call existing contract:dohrnii_token_contrat = DHN.at("0x3194cBDC3dbcd3E11a07892e7bA5c3394048Cc87")(dohrnii_account,{"from": dohrnii_account})
     dohrnii_token_contrat = DHN.deploy(dohrnii_account,{"from": dohrnii_account})
-    time.sleep(1)#avoids known Brownie error "web3 is not connected"
-    dataset_factory = DataSetFactory.deploy(dohrnii_token_contrat, {"from": dohrnii_account})
-    time.sleep(1)#avoids known Brownie error "web3 is not connected"
+
+    dataset_factory = DataSetFactory.deploy({"from": dohrnii_account})
+
+    #Proxy initializer
+    DSF_encoded_initializer_function = encode_function_data(dataset_factory.initialize, dohrnii_token_contrat,20*10**18)
+
+    #Proxy deployment
+    proxy = TransparentUpgradeableProxy.deploy(
+        dataset_factory.address,
+        dohrnii_account.address,
+        #proxy_admin.address,
+        DSF_encoded_initializer_function,
+        {"from": dohrnii_account, "gas_limit": 1000000},
+    )
+    #Establish initial link of proxy to DataSetFactory.sol
+    dataset_factory = Contract.from_abi("DataSetFactory", proxy.address, DataSetFactory.abi)
+
+
     return dataset_factory, dohrnii_token_contrat
 
 #Testing createDS() from DataSetFactory.sol
@@ -91,42 +107,12 @@ def withdrawFunds(dec_fit, DHN,DSF, ds_creator_account, ds_name):
     print("Creator Balance After withdraw: " + str(DHN.balanceOf(ds_creator_account)/dec_fit))#TEST:should be 30 (10 he had + 10 from each sub)
     print("Contract balance After withdraw: "+str(DS.getContractBalance()/dec_fit))#TEST:should bonly be the staked 20
 
+def upgradeDSF(dohrnii_account):
+    dataset_factoryV2 = DataSetFactoryV2.deploy({"from": dohrnii_account})
+    proxy = TransparentUpgradeableProxy[-1]
+    upgrade(dohrnii_account, proxy, dataset_factoryV2,None, None)
+    print("Proxy has been upgraded!")
+    proxy_box = Contract.from_abi("DataSetFactoryV2", proxy.address, DataSetFactoryV2.abi)
+    return proxy_box
   
-def main():
-    dec_fit = 10**18
-    #Get the DataSetFactory.sol instance after deployment and the account used
-    (DSF,DHN)=deploy()
-
-    #Define accounts
-    dohrnii_account = accounts[0] #mints the DHN tokens
-    ds_creator_account = accounts[1] #creates a nem Data Set callled "Tetris"
-    ds_subscriber_account1 = accounts[2] #will subscribe to the "Tetris" dataset with a 1s sub time
-    ds_subscriber_account2 = accounts[3] #will also subscribe to the "Tetris" dataset with a 1s sub time
-    ds_subscriber_account3 = accounts[4] #will subscribe to the "Tetris" dataset with a 1day sub time
-    ds_subscriber_account4 = accounts[5] #will also subscribe to the "Tetris" dataset with a 30 days sub time
-
-    #Fund accounts
-    DHN.transfer(ds_creator_account, 30*dec_fit, {"from": dohrnii_account}) #fund the creator
-    DHN.transfer(ds_subscriber_account1, 30*dec_fit, {"from": dohrnii_account}) #fund sub1
-    DHN.transfer(ds_subscriber_account2, 30*dec_fit, {"from": dohrnii_account}) #fund sub2  
-
-    #Create a DS and instantiate it
-    createDS(dec_fit, DHN, DSF, ds_creator_account,"Tetris", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
-                 "Games","Tetris statistics and data", 10*dec_fit, 3600, 2*dec_fit)
-
-    #Sub1
-    subToDS(dec_fit, DHN, DSF, ds_subscriber_account1, "Tetris", 0)    
-    #Sub2
-    subToDS(dec_fit, DHN, DSF, ds_subscriber_account2, "Tetris", 0)
-
-    #Simulating the passing of 10 seconds
-    chain.sleep(10)
-
-    #Withdraw funds
-    withdrawFunds(dec_fit, DHN, DSF, ds_creator_account, "Tetris")
-
-    #Get a DS info
-    getDSinfo(dec_fit, DSF, ds_creator_account, "Tetris")
-
-    time.sleep(1) #avoids known Brownie error "web3 is not connected"
-    print(DHN.balanceOf(dohrnii_account))
+    

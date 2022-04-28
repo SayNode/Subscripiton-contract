@@ -7,9 +7,8 @@ import "OpenZeppelin/openzeppelin-contracts@4.4.2/contracts/token/ERC20/IERC20.s
 import "OpenZeppelin/openzeppelin-contracts@4.4.2/contracts/security/ReentrancyGuard.sol";//Avoid double buying creation
 import "OpenZeppelin/openzeppelin-contracts@4.4.2/contracts/proxy/utils/Initializable.sol";//https://docs.openzeppelin.com/upgrades-plugins/1.x/proxies
 
-contract DataSetFactory is ReentrancyGuard, Ownable, Initializable{
+contract DataSetFactoryV2 is ReentrancyGuard, Ownable, Initializable{
 
-    event Staking(address indexed _from, address indexed _to, uint _value);
     //
     //VARIABLES
     //
@@ -19,7 +18,7 @@ contract DataSetFactory is ReentrancyGuard, Ownable, Initializable{
 
         //Token Contract address placeholder
         IERC20 public DHN;
-        address public DHNAddress;
+        address DHNAddress;
 
         //Creator arrays
         address[] public creators;
@@ -41,17 +40,11 @@ contract DataSetFactory is ReentrancyGuard, Ownable, Initializable{
         //Complements the previous two mappings
         mapping(address => bool) public contractExists;
 
-    //
+     //
     //CONSTRUCTOR->As this contract is acessed by proxy, the constructor must be replaced by a function that is only called once
     //             This this function must be called whenever the proxy links to this logic contract
     //
-    
-        //Establish the DHN token contract for later use
-        function initialize(address _DHNAddress, uint _stakeAmount) public initializer {
-            DHNAddress = _DHNAddress;
-            DHN = IERC20(_DHNAddress);
-            stakeAmount = _stakeAmount;
-        }
+ 
         
     //
     //MODIFIERS
@@ -90,7 +83,6 @@ contract DataSetFactory is ReentrancyGuard, Ownable, Initializable{
                                             _DSprice, _updateFrequency, stakeAmount, penalty);
                 //Must send the stake DHN tokens from this contract to the newly created child
                 DHN.transferFrom(msg.sender, payable(address(dataset)), stakeAmount);
-                emit Staking(msg.sender, address(this), stakeAmount);
                 // or payable(address(dataset)).call{value:  stakeAmount}("");
 
                 //Update this mapping to say that this contract address still exists
@@ -117,6 +109,11 @@ contract DataSetFactory is ReentrancyGuard, Ownable, Initializable{
         function deleteChild(address _DS_address) external view onlyChildContracts(){//will delete the Data Set of a creator because 
                                                                         //he selfdestructed the corresponding DataSet.sol
             contractExists[_DS_address]==false;
+        }
+
+        //This function only exists in this contract and not in DataSetFactory.sol
+        function upgradeFunction() public pure returns(string memory){
+            return "The contract was upgraded";
         }
     
 }

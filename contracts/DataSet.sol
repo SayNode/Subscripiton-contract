@@ -119,7 +119,7 @@ contract DataSet is ReentrancyGuard{
         function updateURL(string memory _URL) public onlyOwner {
 
             //Require the new URL to be different from the previous one
-            require(_URL != URL, "Can't upload the same URL");
+            require(keccak256(abi.encodePacked(_URL)) != keccak256(abi.encodePacked(URL)), "Can't upload the same URL");
 
             //Updates the URL link
             URL = _URL;

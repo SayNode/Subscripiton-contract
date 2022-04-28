@@ -1,22 +1,19 @@
-#from pathlib import Path
-from brownie import project, accounts, config,chain,  DataSetFactory,DataSet, DHN
+from brownie import accounts, config,chain,  DataSetFactory,DataSet, DHN
 import scripts.deploy as deployer
-
-#Vault = project.load(
- #   Path.home() / ".brownie" / "packages" / config["dependencies"][0]
-#).Vault
 
 #Test the creation of a new DataSet
 
 def testCreateDS():
+    
     dec_fit = 10**18
+
     #Get the DataSetFactory.sol instance after deployment and the account used
     (DSF,DHN)=deployer.deploy()
 
     #Define accounts
     dohrnii_account = accounts[0] #mints the DHN tokens
     ds_creator_account1 = accounts[1] #creates a nem Data Set callled "Tetris"
-    ds_creator_account2 = accounts[2] #creates a nem Data Set callled "Tetris"
+    ds_creator_account2 = accounts[2] #creates a nem Data Set callled "Desserts"
     random_account1 = accounts[3]#just to call a DS by its name
 
     #Fund accounts
@@ -28,12 +25,15 @@ def testCreateDS():
                  "Games","Tetris statistics and data", 10*dec_fit, 3600, 2*dec_fit)
 
     DS_instance1 = deployer.getDSbyName(dec_fit, DSF, random_account1, "Tetris")
+
+    #Upgrade DataSetFactory. sol to DataSetFactoryV2.sol
+    DSF2= deployer.upgradeDSF(dohrnii_account)
     
-    #Create a DS and instantiate it
-    deployer.createDS(dec_fit, DHN, DSF, ds_creator_account2,"Desserts", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
+    #Create a DS in the DataSetFactoryV2.sol and instantiate it
+    deployer.createDS(dec_fit, DHN, DSF2, ds_creator_account2,"Desserts", "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
                  "Food","Some dessert recipes", 5*dec_fit, 3600, 2*dec_fit)
           
-    DS_instance2 = deployer.getDSbyName(dec_fit, DSF, random_account1, "Desserts")
+    DS_instance2 = deployer.getDSbyName(dec_fit, DSF2, random_account1, "Desserts")
 
     #Assertion: DS creation
     expected1 = ("Tetris", 
@@ -91,3 +91,6 @@ def testCreateDS():
                         DS_instance2.updateFrequency(),
                         DS_instance2.subCount(),
                         DS_instance2.creatorAddress())
+    
+    #Assertion: see if the upgradeFunction() function, that is only in DataSetFactoryV2.sol, is working
+    assert DSF2.upgradeFunction({"from": random_account1}) == "The contract was upgraded"
