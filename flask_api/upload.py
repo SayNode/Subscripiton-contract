@@ -60,3 +60,11 @@ def upload_file():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+# To run it download a test rest api app, I used the extenstion Advanced Rest Client.
+# Method: post
+# Request URL:  http://127.0.0.1:5000/upload
+# Header: Header name: Content-Type
+#         Header value: multipart/form-data
+# Body:
+# Field name: files[] and the Choose the file you want to upload

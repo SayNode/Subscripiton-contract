@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/SayNode/Subscripiton-contract/issues"
   },
-  "homepage": "https://github.com/SayNode/Subscripiton-contract#readme"
+  "homepage": "https://github.com/SayNode/Subscripiton-contract#readme",
+  "devDependencies": {
+    "@openzeppelin/contracts": "^4.5.0"
+  }
 }
