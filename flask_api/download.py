@@ -23,6 +23,6 @@ if __name__ == "__main__":
     app.run(debug=True)
 
 
-# to download a file we run: http://127.0.0.1:5000/download and the file will be downloaded or http://127.0.0.1:5000/download and the download button
+# to download a file we run: http://127.0.0.1:5000/download and the file will be downloaded or http://127.0.0.1:5000/ and the download button
 
 # to do: find a way to download specific files that are uploaded from the the ulpoad.py file without needed to write a function for each
