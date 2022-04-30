@@ -16,7 +16,7 @@ def download_files():
     path = join(
         dirname(realpath(__file__)), "static/uploads/screenshot.png"
     )  # path to the file we want to download
-    return send_file(path, as_attachment=True)  # doenload as an atachment
+    return send_file(path, as_attachment=True)  # download as an atachment
 
 
 if __name__ == "__main__":
