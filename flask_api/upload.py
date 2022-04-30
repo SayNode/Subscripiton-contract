@@ -1,12 +1,14 @@
-from flask import Flask, json, request, jsonify
+from distutils.command.upload import upload
+from flask import Flask, json, request, jsonify, render_template
 import os
+from os.path import join, dirname, realpath
 import urllib.request
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
 
-UPLOAD_FOLDER = "static/uploads"
+UPLOAD_FOLDER = join(dirname(realpath(__file__)), "static/uploads/..")
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 
@@ -19,7 +21,7 @@ def allowed_file(filename):
 
 @app.route("/")
 def main():
-    return "Homepage"
+    return render_template("upload.html")
 
 
 @app.route("/upload", methods=["POST"])
@@ -68,3 +70,6 @@ if __name__ == "__main__":
 #         Header value: multipart/form-data
 # Body:
 # Field name: files[] and the Choose the file you want to upload
+
+
+# NOW POSSIBLE FROM THE WEB INTERFACE
