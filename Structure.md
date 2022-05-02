@@ -3,6 +3,7 @@ Every time that this doc mentions getting info on a variable from the smart cont
 1) Creator must stake A amount of DHN tokens in order to create a new data set. This tokens are staked directly in that DS contract
 2) Every time the creator misses an upload schedule, he incurs in a penalty of value B. This penalty is taken by the Dohrnii organization, directly from the staked tokens in the corresponding DS contract. This penalties will help the Foundation pay for the operation. But how do we now if the update schedule has been broken without spending a lot of gas (constantly checking within the contract)?
      - **I)**:After creating the DS, the Dohrnii server backend saves the creation time, the update schedule (*updateSchedule*), the staked amount (*stakedAmount*), the penalty and the contract address of the DS in a database;
+  ![alt text](./Images/DB-dohrnii.png "Title")
      - **II)**:Everytime someone calls the "requestURL()" functionin the DS smart contract, we read the block.timestamp, the current *lastUpdated* value and see if
     >                                block.timestamp>lastUpdated+updateSchedule
       aka, we see if the current time is greater than the last time the DS was updated (*lastUpdated*) plus the update schedule time (*updateSchedule*)
@@ -13,3 +14,9 @@ Every time that this doc mentions getting info on a variable from the smart cont
     - **A. The subscription time ends**: if the subscription time has ended, the subscriber has had the product he has payed for, so the creator can now withdraw that subscribers payment. This is done  when the creator calls the "withdrawFunds()" functions in the DataSet.sol smart contract. The creator pays the gas fee for this operation so it is not advised to constantly spam it
     - **B. The Data set is eliminated by the creator**: this can happen because the creator decided to trigger the "deleteDS()" function in the DataSet.sol smart contract, for whatever reason. This function basically runs the same code as as "withdrawFunds()" and sends the rest of the funds to the subscribers who have their subscription cut short, and so don't have to pay the creator. This function is evry gas intensive so the creators are disincentivized from creating and deleting DSs often
     - **C. The Data set is eliminated due to zero stake**: because the creator has missed so many update schedules that the penalties have depleted all of his initially staked DHN tokens (aka his staked tokens become 0). This verified in the backend server of the Dohrnii foundation, as it was described in **V**.
+  
+# Backend structure
+## IPFS Upload
+![alt text](./Images/IPFSUPLOAD.png "Title")
+## IPFS Download
+![alt text](./Images/IPFSDOWNLOAD.png "Title")
