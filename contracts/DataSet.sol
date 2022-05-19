@@ -159,7 +159,7 @@ contract DataSet is ReentrancyGuard{
             
         }
 
-        //DO WE WANT THIS???
+        //DO WE WANT THIS???- NO REMOVE THIS
         function stakeMoreDHN(uint _amount) public payable{//need to see if we want this or not
             //require that currentBalance+_amount<stakeAmount aka his balance of DHN can't be bigger than the pre-established amount  
             require(stakedAmount+_amount<=stakeAmount, "Can't re-stake that much");
